@@ -5,6 +5,7 @@ public class BuyerDto {
     private String name;
     private String password;
 
+
     public String getEmailId() {
         return emailId;
     }

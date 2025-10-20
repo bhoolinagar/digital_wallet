@@ -57,13 +57,7 @@ class WalletServiceImplTest {
         buyer.setRole(Role.BUYER);
     }
 
-    @Test
-    void generateWalletId() {
-    }
 
-    @Test
-    void getWalletDetails() {
-    }
 
     @Test
     void linkBankAccountToWallet_success() {
