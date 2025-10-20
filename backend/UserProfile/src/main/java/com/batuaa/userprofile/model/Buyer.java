@@ -1,8 +1,5 @@
 package com.batuaa.userprofile.model;
 
-import com.batuaa.TransactionService.model.Gender;
-import com.batuaa.TransactionService.model.Role;
-import com.batuaa.TransactionService.model.Wallet;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -14,31 +11,31 @@ import java.util.List;
 @Entity
 @Table(name="buyer_records")
 public class Buyer {
-    /*
-     * id <PK> : Integer String email name: Name gender: enum mobileNumber : int
-     * address: String anual_Income: String password: String(min 8 -12 digit)
-     * ADMIN/BUYER : enum(Role)
-     *
-     */
+	/*
+	 * id <PK> : Integer String email name: Name gender: enum
+	 * ADMIN/BUYER : enum(Role)
+	 * 
+	 */
 
-    @Id
+	@Id
     @Email
-    @Column(nullable = false, unique = true)
-    private String emailId;
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
+	private String emailId;
 
-    @NotBlank
-    private String name;
+	@NotBlank
+	private String name;
 
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
 
-    // Store hashed password only, not plain text
-    @Size(min = 8, max = 12, message = "Password must be between 8 and 12 characters")
-    @Column(nullable = false)
-    private String password;
+	// Store hashed password only, not plain text
+	@Size(min = 8, max = 12, message = "Password must be between 8 and 12 characters")
+	@Column(nullable = false)
+	private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+	@Enumerated(EnumType.STRING)
+	private Role role;
 
     @JsonBackReference  // to avoid bi-cyclic process during db calling
     @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
