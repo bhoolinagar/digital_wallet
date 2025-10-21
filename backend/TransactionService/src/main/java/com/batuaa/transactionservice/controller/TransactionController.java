@@ -4,10 +4,15 @@ import com.batuaa.transactionservice.dto.*;
 import com.batuaa.transactionservice.model.Transaction;
 import com.batuaa.transactionservice.service.TransactionService;
 import jakarta.validation.Valid;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +23,8 @@ import java.util.List;
 
 @RequestMapping("/transaction/api/v2")
 public class TransactionController {
+
+
 
     @Autowired
     private final TransactionService transactionService;
@@ -66,6 +73,18 @@ public class TransactionController {
         List<Transaction> transactions = transactionService.viewTransactionsByType(transactionTypeDto);
 
         ApiResponse response = new ApiResponse(
+
+                "success",
+                transactions.isEmpty()
+                        ? "No transactions found"
+                        : "Transactions fetched successfully",
+                transactions
+        );
+        return ResponseEntity.ok(response);
+       /*
+        ApiResponse response= new ApiResponse("success","transaction fetched successfully",transactions);
+
+        return ResponseEntity.ok(response);*/
                 200,
                 transactions.isEmpty()
                         ? "No transactions found for the selected type"
@@ -74,6 +93,7 @@ public class TransactionController {
         );
 
         return ResponseEntity.ok(response);
+
     }
 
     /**
