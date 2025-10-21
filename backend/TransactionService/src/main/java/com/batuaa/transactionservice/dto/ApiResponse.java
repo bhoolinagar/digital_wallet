@@ -12,6 +12,21 @@ public class ApiResponse<T> {
     }
 
     public ApiResponse() {
+
+import lombok.Builder;
+@Builder
+public class ApiResponse<T> {
+    private int statusCode;
+    private String message;
+    private T data;
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+
     }
 
     public String getMessage() {
@@ -30,11 +45,18 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
+
     public ApiResponse(String statusCode, String message, T data) {
         this.status = statusCode;
+
+public ApiResponse(){}
+    public ApiResponse(int statusCode, String message, T data) {
+        this.statusCode = statusCode;
+
         this.message = message;
         this.data = data;
     }
+
 
     public String getStatus() {
         return status;
@@ -43,6 +65,7 @@ public class ApiResponse<T> {
     public void setStatus(String status) {
         this.status = status;
     }
+
 
 
 }

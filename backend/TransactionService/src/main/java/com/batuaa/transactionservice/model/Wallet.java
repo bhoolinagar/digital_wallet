@@ -73,10 +73,12 @@ public class Wallet {
         this.accountNumber = accountNumber;
     }
 
+
     public Wallet() {
     }
 
     public Wallet(String walletId) {
         this.walletId = walletId;
     }
+
 }

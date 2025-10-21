@@ -1,10 +1,25 @@
 package com.batuaa.transactionservice.model;
 
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
 
 
 @Entity
@@ -41,6 +56,7 @@ public class Transaction {
     private Status status; // SUCCESS, PROCESSING, FAILED
 
     private String remarks;
+
 
     public Transaction(int i, BigDecimal bigDecimal, String receivedRs500FromWalletWal4DA22CC6, String success, LocalDateTime localDateTime, Object o, Wallet wal0DC01EF4, Wallet wal2ED73EBA, String mail, String email, Type received) {
 
@@ -124,7 +140,13 @@ private Type type;
         this.remarks = remarks;
     }
 
+
     public Transaction(Integer transactionId, Wallet fromWallet, Wallet toWallet, Buyer fromBuyer, Buyer toBuyer, BigDecimal amount, LocalDateTime timestamp, Status status, String remarks, Type type) {
+
+public Transaction(){
+
+}
+    public Transaction(Integer transactionId, Wallet fromWallet, Wallet toWallet, Buyer fromBuyer, Buyer toBuyer, BigDecimal amount, LocalDateTime timestamp, Status status, String remarks) {
         this.transactionId = transactionId;
         this.fromWallet = fromWallet;
         this.toWallet = toWallet;
@@ -134,6 +156,7 @@ private Type type;
         this.timestamp = timestamp;
         this.status = status;
         this.remarks = remarks;
+
         this.type = type;
     }
 
@@ -143,5 +166,6 @@ private Type type;
 
     public void setType(Type type) {
         this.type = type;
+
     }
 }

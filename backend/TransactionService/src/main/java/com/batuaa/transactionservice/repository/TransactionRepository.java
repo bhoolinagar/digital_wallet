@@ -1,6 +1,5 @@
 package com.batuaa.transactionservice.repository;
-
-
+import com.batuaa.transactionservice.model.Status;
 import com.batuaa.transactionservice.model.Transaction;
 import com.batuaa.transactionservice.model.Type;
 import org.springframework.data.domain.Page;
@@ -8,6 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+
+import org.springframework.lang.NonNull;
+
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -37,11 +40,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             Pageable pageable
     );
 
+
     @Query("select t from Transaction t where t.fromWallet.walletId = ?1 and t.type = ?2")
     List<Transaction> findByFromWalletIdAndType(String walletId, Type type);
 
     @Query("select t from Transaction t where t.toWallet.walletId = ?1 and t.type = ?2")
     List<Transaction> findByToWalletIdAndType(String walletId, Type type);
+
+    @Query("""
+            select t from Transaction t
+            where t.fromWallet.walletId = :walletId and t.toWallet.walletId = :walletId1 and t.type = :type""")
+    List<Transaction> findByWalletIdAndType(@Param("walletId") String walletId, @Param("walletId1") String walletId1, @Param("type") Type type);
+
 
 
 }

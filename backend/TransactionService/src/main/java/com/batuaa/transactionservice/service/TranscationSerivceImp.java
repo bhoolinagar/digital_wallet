@@ -23,6 +23,8 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +50,7 @@ private final WalletRepository walletRepository;
     }
 
     // to filter transactions by date
+
     //@Transactional(readOnly = true)
 
     @Override
@@ -102,10 +105,64 @@ private final WalletRepository walletRepository;
     }
 
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Transaction> findByWalletIdAndDateBetween(TransactionDateRangeDto dto) {
+        try {
+            // 1. Validate wallet existence
+            boolean walletExists = walletRepository.existsByIdAndEmailId(dto.getWalletId(), dto.getEmailId());
+            if (!walletExists) {
+                throw new WalletNotFoundException("Wallet not found: " + dto.getWalletId());
+            }
+
+            // 2. Validate date range
+            if (dto.getStartDate().isAfter(dto.getEndDate())) {
+                throw new DateTimeException("Start date cannot be after end date");
+            }
+
+            LocalDate startDate = dto.getStartDate();
+            LocalDate endDate = dto.getEndDate();
+            LocalDate today = LocalDate.now();
+
+            // 3. Prevent selecting future calendar dates
+            if (startDate.isAfter(today) || endDate.isAfter(today)) {
+                throw new DateTimeException("Start and end dates cannot be in the future");
+            }
+
+            // 4. Convert to time range (full day)
+            LocalDateTime startOfDay = startDate.atStartOfDay();
+            LocalDateTime endOfDay = endDate.atTime(LocalTime.MAX);
+
+            // 5.Pagination setup (20 records per page)
+            Pageable pageable = PageRequest.of(dto.getPage(), 20, Sort.by("timestamp").descending());
+
+            // 6⃣ Fetch transactions from repo
+            Page<Transaction> transactionsPage = transactionRepository.findByWalletAndTimestampRange(
+                    dto.getWalletId(),
+                    startOfDay,
+                    endOfDay,
+                    pageable
+            );
+
+            // [7]. Return results directly
+            return transactionsPage.getContent();
+
+        } catch (WalletNotFoundException | DateTimeException e) {
+            log.error("Validation error while fetching transactions: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error fetching transactions for wallet {}: {}", dto.getWalletId(), e.getMessage(), e);
+            return Collections.emptyList();
+        }
+    }
+
+
     //to view transactions based on wallet id, email id, and type
     @Override
     @Transactional(readOnly = true)
     public List<Transaction> viewTransactionsByType(TransactionTypeDto transactionTypeDto) {
+
         // 1. Validate wallet existence
         boolean walletExists = walletRepository.existsByIdAndEmailId(
                 transactionTypeDto.getWalletId(),
@@ -143,6 +200,44 @@ private final WalletRepository walletRepository;
         return result.stream()
                 .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
                 .collect(Collectors.toList());
+
+        try {
+            // 1 Validate wallet existence
+            boolean walletExists = walletRepository.existsByIdAndEmailId(
+                    transactionTypeDto.getWalletId(),
+                    transactionTypeDto.getEmailId()
+            );
+
+            if (!walletExists) {
+                throw new WalletNotFoundException("Wallet not found: " + transactionTypeDto.getWalletId());
+            }
+
+            // 2.Fetch transactions by walletId and type
+            List<Transaction> result = transactionRepository.findByWalletIdAndType(
+                    transactionTypeDto.getWalletId(),transactionTypeDto.getWalletId(),
+                    transactionTypeDto.getType()
+            );
+
+            if (result.isEmpty()) {
+                throw new EmptyTransactionListException("No transactions found for wallet: " + transactionTypeDto.getWalletId());
+            }
+
+            // 3. Sort by timestamp (newest first)
+            return result.stream()
+                    .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+                    .collect(Collectors.toList());
+
+        } catch (WalletNotFoundException e) {
+            log.error("Validation error while fetching transactions: {}", e.getMessage());
+        } catch (EmptyTransactionListException e) {
+            log.warn(e.getMessage());
+        } catch (Exception e) {
+            log.error("Unexpected error fetching transactions for wallet {}: {}",
+                    transactionTypeDto.getWalletId(), e.getMessage(), e);
+        }
+
+        return Collections.emptyList();
+
     }
 
 
@@ -167,5 +262,4 @@ private final WalletRepository walletRepository;
         return null;
     }
 }
-
 
