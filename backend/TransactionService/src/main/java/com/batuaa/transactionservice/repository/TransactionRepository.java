@@ -20,7 +20,9 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
 
     //find wallet id by custom range
-    List<Transaction> findByFromWallet_WalletIdOrToWallet_WalletIdAndTimestampBetween(String walletId, String walletId1, LocalDateTime startOfDay, LocalDateTime endOfDay);
+    List<Transaction> findByFromWallet_WalletIdOrToWallet_WalletIdAndTimestampBetween(String walletId,
+                                                                                      String walletId1, LocalDateTime startOfDay,
+                                                                                      LocalDateTime endOfDay);
 
 
     // List<Transaction>findByFromWallet_WalletIdOrToWallet_WalletId(String )
@@ -51,6 +53,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             select t from Transaction t
             where t.fromWallet.walletId = :walletId and t.toWallet.walletId = :walletId1 and t.type = :type""")
     List<Transaction> findByWalletIdAndType(@Param("walletId") String walletId, @Param("walletId1") String walletId1, @Param("type") Type type);
+
 
 
 

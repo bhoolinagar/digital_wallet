@@ -10,4 +10,6 @@ public class UserProfileApplication {
 		SpringApplication.run(UserProfileApplication.class, args);
 	}
 
+
+
 }
