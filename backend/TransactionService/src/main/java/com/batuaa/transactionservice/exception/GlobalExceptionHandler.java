@@ -15,16 +15,6 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AmountCanNotBeNullException.class)
-    public ResponseEntity<ApiResponse<Object>> handleAmountNull(AmountCanNotBeNullException ex) {
-        ApiResponse<Object> response = ApiResponse.builder()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getMessage())
-                .data(null)
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(InsufficientFundsException.class)
     public ResponseEntity<ApiResponse<Object>> handleInsufficientFunds(InsufficientFundsException ex) {
         ApiResponse<Object> response = ApiResponse.builder()
@@ -34,6 +24,7 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(UnableToAddMoneyException.class)
     public ResponseEntity<ApiResponse<Object>> handleUnableToAddMoney(UnableToAddMoneyException ex) {
         ApiResponse<Object> response = ApiResponse.builder()
@@ -44,10 +35,33 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleTransactionNotFound(TransactionNotFoundException ex) {
+        ApiResponse<Object> response = ApiResponse.builder()
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(UnableToFilterByRemarkException.class)
-    public ResponseEntity<ApiResponse<Object>> handleFilterByRemarkError(UnableToFilterByRemarkException ex) {
-        ApiResponse<Object> response = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), null);
+    public ResponseEntity<ApiResponse<Object>> handleUnableToFilterByRemark(UnableToFilterByRemarkException ex) {
+        ApiResponse<Object> response = ApiResponse.builder()
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(DuplicateTransactionException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDuplicateTransaction(DuplicateTransactionException ex) {
+        ApiResponse<Object> response = ApiResponse.builder()
+                .statusCode(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(WalletNotFoundException.class)

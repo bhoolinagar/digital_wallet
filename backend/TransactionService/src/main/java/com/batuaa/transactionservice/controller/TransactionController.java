@@ -19,9 +19,9 @@ import java.util.List;
 @RequestMapping("/transaction/api/v2")
 public class TransactionController {
 
-    @Autowired
+//    @Autowired
     private final TransactionService transactionService;
-@Autowired
+    @Autowired
     public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
@@ -38,19 +38,39 @@ public class TransactionController {
     /**
      * Transfer money from one wallet to another
      */
-    @PostMapping("/transfer-wallet-to-wallet")
+    @PostMapping("/transfer-wallet")
     public ResponseEntity<?> transferWalletToWallet(@Valid @RequestBody TransferDto transferDto) {
         log.info("Initiating wallet-to-wallet transfer: {}", transferDto);
-        return ResponseEntity.ok(transactionService.transferWalletToWallet(transferDto));
+        Transaction transaction = transactionService.transferWalletToWallet(transferDto);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .statusCode(200)
+                .message("Transaction completed successfully")
+                .data(transaction).build());
     }
 
     /**
      * View transaction by remark and transactionId
      */
+//    @GetMapping("/view-transactions-by-remark")
+//    public ResponseEntity<?> viewTransactionByRemark(@RequestBody TransactionRemarkDto transactionRemarkDto) {
+//        log.info("Fetching transaction by remark: {}", transactionRemarkDto.getRemark());
+//        return ResponseEntity.ok(transactionService.filterTransactionsByRemark(transactionRemarkDto ));
+//    }
+//    HTTP GET doesn’t support a body, so @RequestBody TransactionRemarkDto won’t work
+//     solution figured was to use @ModelAttribute, which binds query parameters to a DTO automatically.
     @GetMapping("/view-transactions-by-remark")
-    public ResponseEntity<?> viewTransactionByRemark(@RequestBody TransactionRemarkDto transactionRemarkDto) {
-        log.info("Fetching transaction by remark: {}", transactionRemarkDto.getRemark());
-        return ResponseEntity.ok(transactionService.filterTransactionsByRemark(transactionRemarkDto ));
+    public ResponseEntity<?> viewTransactionByRemark(
+            @Valid @ModelAttribute TransactionRemarkDto transactionRemarkDto) {
+
+        log.info("Filtering transactions by remark: {}"
+                ,transactionRemarkDto.getRemark());
+        List<Transaction> transactions = transactionService.filterTransactionsByRemark(transactionRemarkDto);
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .statusCode(200)
+                .message("Filtered transactions successfully")
+                .data(transactions)
+                .build());
     }
 
     /**

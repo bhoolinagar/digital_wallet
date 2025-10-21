@@ -4,6 +4,7 @@ package com.batuaa.transactionservice.repository;
 import com.batuaa.transactionservice.model.Status;
 import com.batuaa.transactionservice.model.Transaction;
 import com.batuaa.transactionservice.model.Type;
+import com.batuaa.transactionservice.model.Wallet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -59,4 +60,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             @Param("keyword") String keyword);
 
 
+    Optional<Transaction> findByFromWalletAndToWalletAndAmountAndStatus(Wallet walletFrom, Wallet walletTo, BigDecimal amount, Status status);
 }

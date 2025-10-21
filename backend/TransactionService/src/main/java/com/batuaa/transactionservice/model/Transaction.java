@@ -43,12 +43,15 @@ public class Transaction {
     // FK to destination Wallet
     private BigDecimal amount;
     private LocalDateTime timestamp; // Full date & time
+
     @Enumerated(EnumType.STRING)
     private Status status; // SUCCESS, PROCESSING, FAILED
 
     private String remarks;
+
     @Enumerated(EnumType.STRING)
-private Type type;
+    private Type type;
+
     public Integer getTransactionId() {
         return transactionId;
     }
@@ -120,10 +123,19 @@ private Type type;
     public void setRemarks(String remarks) {
         this.remarks = remarks;
     }
-public Transaction(){
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Transaction(){
 
 }
-    public Transaction(Integer transactionId, Wallet fromWallet, Wallet toWallet, Buyer fromBuyer, Buyer toBuyer, BigDecimal amount, LocalDateTime timestamp, Status status, String remarks) {
+    public Transaction( Wallet fromWallet, Wallet toWallet, Buyer fromBuyer, Buyer toBuyer, BigDecimal amount, LocalDateTime timestamp, Status status, String remarks, Type type) {
         this.transactionId = transactionId;
         this.fromWallet = fromWallet;
         this.toWallet = toWallet;
@@ -133,5 +145,6 @@ public Transaction(){
         this.timestamp = timestamp;
         this.status = status;
         this.remarks = remarks;
+        this.type = type;
     }
 }
