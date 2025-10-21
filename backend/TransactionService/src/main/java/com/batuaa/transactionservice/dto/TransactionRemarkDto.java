@@ -16,4 +16,16 @@ public class TransactionRemarkDto {
     public String getRemark() {
         return remark;
     }
+
+    public void setEmailId(String emailId) {
+        this.emailId = emailId;
+    }
+
+    public void setWalletId(String walletId) {
+        this.walletId = walletId;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 }

@@ -15,6 +15,41 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(AmountCanNotBeNullException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAmountNull(AmountCanNotBeNullException ex) {
+        ApiResponse<Object> response = ApiResponse.builder()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InsufficientFundsException.class)
+    public ResponseEntity<ApiResponse<Object>> handleInsufficientFunds(InsufficientFundsException ex) {
+        ApiResponse<Object> response = ApiResponse.builder()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(UnableToAddMoneyException.class)
+    public ResponseEntity<ApiResponse<Object>> handleUnableToAddMoney(UnableToAddMoneyException ex) {
+        ApiResponse<Object> response = ApiResponse.builder()
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UnableToFilterByRemarkException.class)
+    public ResponseEntity<ApiResponse<Object>> handleFilterByRemarkError(UnableToFilterByRemarkException ex) {
+        ApiResponse<Object> response = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(WalletNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleWalletNotFound(WalletNotFoundException ex) {
         ApiResponse<Object> response = ApiResponse.builder()
@@ -68,5 +103,7 @@ public class GlobalExceptionHandler {
         ApiResponse response = new ApiResponse(400, "Validation error: " + errors, null);
         return ResponseEntity.badRequest().body(response);
     }
+
+
 
 }

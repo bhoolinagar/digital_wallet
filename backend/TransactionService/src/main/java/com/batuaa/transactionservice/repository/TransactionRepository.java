@@ -11,9 +11,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
-
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
@@ -43,6 +45,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             select t from Transaction t
             where t.fromWallet.walletId = :walletId and t.toWallet.walletId = :walletId1 and t.type = :type""")
     List<Transaction> findByWalletIdAndType(@Param("walletId") String walletId, @Param("walletId1") String walletId1, @Param("type") Type type);
+
+
+    @Query(
+            value = "SELECT * FROM transaction_records t " +
+                    "WHERE (UPPER(t.from_wallet_id) = UPPER(:walletId) OR UPPER(t.to_wallet_id) = UPPER(:walletId)) " +
+                    "AND (UPPER(t.from_email_id) = UPPER(:emailId) OR UPPER(t.to_email_id) = UPPER(:emailId)) " +
+                    "AND LOWER(t.remarks) LIKE LOWER(CONCAT('%', :keyword, '%'))",
+            nativeQuery = true)
+    List<Transaction> findByWalletAndEmailAndRemarkNative(
+            @Param("walletId") String walletId,
+            @Param("emailId") String emailId,
+            @Param("keyword") String keyword);
 
 
 }
