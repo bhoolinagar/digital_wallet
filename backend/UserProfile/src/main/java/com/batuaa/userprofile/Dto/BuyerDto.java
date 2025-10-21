@@ -1,10 +1,8 @@
 package com.batuaa.userprofile.Dto;
 
 import com.batuaa.userprofile.model.Role;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.*;
 
 public class BuyerDto {
 
@@ -20,6 +18,8 @@ public class BuyerDto {
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
+    @NotNull(message = "Role is required")
+    @JsonProperty("Role")
     private Role role;
 
     public String getEmailId() {
@@ -45,16 +45,7 @@ public class BuyerDto {
     public void setPassword(String password) {
         this.password = password != null ? password.trim() : null;
     }
-//        public void setEmailId(String emailId) {
-//        this.emailId = emailId;
-//    }
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
+
 
     public Role getRole() {
         return role;

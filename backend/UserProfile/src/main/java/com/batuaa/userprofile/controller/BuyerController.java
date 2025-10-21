@@ -37,29 +37,84 @@ public class BuyerController {
 //        } catch (Exception e) {
 //            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 //        }
+////    }
+//    @PostMapping("/register")
+//    public ResponseEntity<?> registerBuyer(@Valid @RequestBody BuyerDto buyerDto) {
+//        Buyer savedBuyer = buyerService.registerBuyer(buyerDto);
+//        buyerDto.setRole(savedBuyer.getRole());
+//        return new ResponseEntity<>(buyerDto, HttpStatus.CREATED);
 //    }
-    @PostMapping("/register")
-    public ResponseEntity<?> registerBuyer(@Valid @RequestBody BuyerDto buyerDto) {
+@PostMapping("/register")
+public ResponseEntity<?> registerBuyer(@Valid @RequestBody BuyerDto buyerDto) {
+    try {
         Buyer savedBuyer = buyerService.registerBuyer(buyerDto);
-        buyerDto.setRole(savedBuyer.getRole());
-        return new ResponseEntity<>(buyerDto, HttpStatus.CREATED);
+
+        BuyerDto responseDto = new BuyerDto();
+        responseDto.setName(savedBuyer.getName());
+        responseDto.setEmailId(savedBuyer.getEmailId());
+        responseDto.setRole(savedBuyer.getRole());
+        responseDto.setPassword(savedBuyer.getPassword());
+
+        String message = savedBuyer.getRole() == Role.ADMIN
+                ? "Admin registered successfully"
+                : "Buyer registered successfully";
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse("success", message, responseDto));
+
+    } catch (RuntimeException e) {
+        // Handle duplicate email or invalid role
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse("fail", e.getMessage(), null));
+    } catch (Exception e) {
+        // Catch-all fallback (avoid 500 in tests)
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse("fail", "Something went wrong", null));
     }
-
-
+}
 
 
     // Login Buyer (Returns JWT Token)
     @PostMapping("/login")
+//    public ResponseEntity<?> loginBuyer(@RequestBody BuyerDto buyerDto) {
+//        Buyer buyer = buyerService.validateBuyer(buyerDto);
+//        if (buyer != null) {
+//            Map<String, String> tokenData = JwtUtil.generateToken(
+//                    buyer.getEmailId(),
+//                    "BUYER" // role
+//            );
+//            return new ResponseEntity<>(tokenData, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>("Invalid credentials", HttpStatus.FORBIDDEN);
+//        }
+//    }
     public ResponseEntity<?> loginBuyer(@RequestBody BuyerDto buyerDto) {
+        // Validate user credentials
         Buyer buyer = buyerService.validateBuyer(buyerDto);
+
         if (buyer != null) {
-            Map<String, String> tokenData = JwtUtil.generateToken(
-                    buyer.getEmailId(),
-                    "BUYER" // role
+            // Generate JWT token
+            //String roleName = buyer.getRole().name();
+            String token = JwtUtil.generateToken( buyer.getEmailId(), buyer.getRole().name()     );
+
+
+            // Role-based message
+            String message = buyer.getRole() == Role.ADMIN ?
+                    "Admin login successful" : "Buyer login successful";
+
+            // Return token + role if needed
+            Map<String, String> data = Map.of(
+                    "token", token,
+                    "role", buyer.getRole().name()
             );
-            return new ResponseEntity<>(tokenData, HttpStatus.OK);
+
+
+            // Return consistent ApiResponse
+            return ResponseEntity.ok(new ApiResponse("success", message, data));
         } else {
-            return new ResponseEntity<>("Invalid credentials", HttpStatus.FORBIDDEN);
+            // Invalid credentials
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse("fail", "Invalid credentials", null));
         }
     }
 }

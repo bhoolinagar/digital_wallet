@@ -16,6 +16,7 @@ public class BuyerServiceImpl implements BuyerService {
     @Autowired
     private BuyerRepository buyerRepository;
 
+
     @Override
     public Buyer registerBuyer(BuyerDto buyerDto) {
         String normalizedEmail = buyerDto.getEmailId().trim().toLowerCase();
@@ -29,11 +30,13 @@ public class BuyerServiceImpl implements BuyerService {
         buyer.setEmailId(normalizedEmail);
         buyer.setName(buyerDto.getName().trim());
         buyer.setPassword(buyerDto.getPassword().trim());
-        buyer.setRole(Role.BUYER);
-        // buyer.setPassword(passwordEncoder.encode(buyerDto.getPassword())); // Encode password
+
+        // Set role from DTO if provided, else default to BUYER
+        buyer.setRole(buyerDto.getRole());
 
         return buyerRepository.save(buyer);
     }
+
 
     @Override
     public Buyer validateBuyer(BuyerDto buyerDto) {
