@@ -99,6 +99,7 @@ public class WalletServiceImpl implements WalletService {
             // Step 4: Create wallet object
             Wallet walletObj = new Wallet();
             walletObj.setWalletId(walletId);
+            walletObj.setBankName(wallet.getBankName());
             walletObj.setAccountNumber(wallet.getAccountNumber());
             walletObj.setBalance(wallet.getBalance());
             walletObj.setBuyer(buyer);

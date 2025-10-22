@@ -4,10 +4,15 @@ import com.batuaa.transactionservice.dto.*;
 import com.batuaa.transactionservice.model.Transaction;
 import com.batuaa.transactionservice.service.TransactionService;
 import jakarta.validation.Valid;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +23,8 @@ import java.util.List;
 
 @RequestMapping("/transaction/api/v2")
 public class TransactionController {
+
+
 
     @Autowired
     private final TransactionService transactionService;
@@ -59,32 +66,30 @@ public class TransactionController {
     @PostMapping("/filter-by-type")
     public ResponseEntity<ApiResponse> filterByType(
             @Valid @RequestBody TransactionTypeDto transactionTypeDto) {
-
         log.info("Filtering transactions for wallet {} by type {}",
                 transactionTypeDto.getWalletId(), transactionTypeDto.getType());
-
         List<Transaction> transactions = transactionService.viewTransactionsByType(transactionTypeDto);
-
         ApiResponse response = new ApiResponse(
-                200,
+
+                "success",
                 transactions.isEmpty()
-                        ? "No transactions found for the selected type"
+                        ? "No transactions found"
                         : "Transactions fetched successfully",
                 transactions
         );
-
         return ResponseEntity.ok(response);
+
     }
 
     /**
      * View transaction history between startDate and endDate for a wallet
      */
 
-    @PostMapping("/transactions/filter-by-date")
+    @PostMapping("/filter-by-date")
     public ResponseEntity<ApiResponse> filterTransactionsByDate(
             @Valid @RequestBody TransactionDateRangeDto dto) {
         List<Transaction> transactions = transactionService.findByWalletIdAndDateBetween(dto);
-        ApiResponse response = new ApiResponse(200, "Transactions fetched successfully", transactions);
+        ApiResponse response = new ApiResponse("success", "Transactions fetched successfully", transactions);
         return ResponseEntity.ok(response);
     }
 

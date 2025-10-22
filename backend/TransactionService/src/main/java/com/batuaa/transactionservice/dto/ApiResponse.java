@@ -1,22 +1,15 @@
 package com.batuaa.transactionservice.dto;
-
-
 import lombok.Builder;
-
 @Builder
 public class ApiResponse<T> {
-    private int statusCode;
+    private String status;
     private String message;
     private T data;
 
-    public int getStatusCode() {
-        return statusCode;
+    public ApiResponse(String status, String message) {
+        this.status = status;
+        this.message = message;
     }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
     public String getMessage() {
         return message;
     }
@@ -32,12 +25,19 @@ public class ApiResponse<T> {
     public void setData(T data) {
         this.data = data;
     }
-public ApiResponse(){}
-    public ApiResponse(int statusCode, String message, T data) {
-        this.statusCode = statusCode;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public ApiResponse(String status, String message, T data) {
+        this.status = status;
         this.message = message;
         this.data = data;
     }
-
 
 }
