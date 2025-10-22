@@ -7,6 +7,7 @@ import com.batuaa.UserProfile.exception.WalletAlreadyFound;
 import com.batuaa.UserProfile.exception.WalletNotFoundException;
 import com.batuaa.UserProfile.model.Wallet;
 import com.batuaa.UserProfile.service.WalletService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class WalletController {
 
     // Link Bank Account
     @PostMapping("/link-bank-account")
-    public ResponseEntity<ApiResponse> linkBankAccountToWallet(@RequestBody WalletDto wallet) {
+    public ResponseEntity<ApiResponse> linkBankAccountToWallet(@Valid @RequestBody WalletDto wallet) {
         String walletId = walletService.linkBankAccountToWallet(wallet);
         return ResponseEntity.status(201)
                 .body(new ApiResponse("success", "Wallet generated successfully", walletId));

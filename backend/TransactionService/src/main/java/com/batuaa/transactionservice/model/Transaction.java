@@ -7,9 +7,6 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -57,14 +54,10 @@ public class Transaction {
 
     private String remarks;
 
-
     public Transaction(int i, BigDecimal bigDecimal, String receivedRs500FromWalletWal4DA22CC6, String success, LocalDateTime localDateTime, Object o, Wallet wal0DC01EF4, Wallet wal2ED73EBA, String mail, String email, Type received) {
 
     }
 
-    public Transaction() {
-
-    }
 
     @Enumerated(EnumType.STRING)
 private Type type;
@@ -141,12 +134,11 @@ private Type type;
     }
 
 
+    public Transaction(){
+
+    }
     public Transaction(Integer transactionId, Wallet fromWallet, Wallet toWallet, Buyer fromBuyer, Buyer toBuyer, BigDecimal amount, LocalDateTime timestamp, Status status, String remarks, Type type) {
 
-public Transaction(){
-
-}
-    public Transaction(Integer transactionId, Wallet fromWallet, Wallet toWallet, Buyer fromBuyer, Buyer toBuyer, BigDecimal amount, LocalDateTime timestamp, Status status, String remarks) {
         this.transactionId = transactionId;
         this.fromWallet = fromWallet;
         this.toWallet = toWallet;

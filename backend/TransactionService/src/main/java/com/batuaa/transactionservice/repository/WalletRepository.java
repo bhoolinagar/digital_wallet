@@ -18,8 +18,6 @@ public interface WalletRepository extends JpaRepository<Wallet, String> {
             where upper(w.walletId) = upper(?1) and upper(w.buyer.emailId) = upper(?2)""")
     boolean existsByIdAndEmailId(String walletId, String emailId);
 
-            where upper(w.buyer.emailId) = upper(:emailId) and upper(w.walletId) = upper(:walletId)""")
-    boolean existsByIdAndEmailId(@Param("emailId") String emailId, @Param("walletId") String walletId);
 
     Optional<Wallet> findByWalletId(String walletId);
 

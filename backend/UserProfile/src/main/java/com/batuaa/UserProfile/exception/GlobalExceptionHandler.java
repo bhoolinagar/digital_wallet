@@ -2,8 +2,11 @@ package com.batuaa.UserProfile.exception;
 import com.batuaa.UserProfile.Dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -35,5 +38,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> handleIllegalArgumentException(Exception ex) {
         ApiResponse response = new ApiResponse("fail",   ex.getMessage());
         return ResponseEntity.status(400).body(response);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        String errors = ex.getBindingResult().getAllErrors().stream()
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        ApiResponse response = new ApiResponse("fail", errors, null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

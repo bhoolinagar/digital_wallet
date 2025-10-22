@@ -66,12 +66,9 @@ public class TransactionController {
     @PostMapping("/filter-by-type")
     public ResponseEntity<ApiResponse> filterByType(
             @Valid @RequestBody TransactionTypeDto transactionTypeDto) {
-
         log.info("Filtering transactions for wallet {} by type {}",
                 transactionTypeDto.getWalletId(), transactionTypeDto.getType());
-
         List<Transaction> transactions = transactionService.viewTransactionsByType(transactionTypeDto);
-
         ApiResponse response = new ApiResponse(
 
                 "success",
@@ -81,18 +78,6 @@ public class TransactionController {
                 transactions
         );
         return ResponseEntity.ok(response);
-       /*
-        ApiResponse response= new ApiResponse("success","transaction fetched successfully",transactions);
-
-        return ResponseEntity.ok(response);*/
-                200,
-                transactions.isEmpty()
-                        ? "No transactions found for the selected type"
-                        : "Transactions fetched successfully",
-                transactions
-        );
-
-        return ResponseEntity.ok(response);
 
     }
 
@@ -100,11 +85,11 @@ public class TransactionController {
      * View transaction history between startDate and endDate for a wallet
      */
 
-    @PostMapping("/transactions/filter-by-date")
+    @PostMapping("/filter-by-date")
     public ResponseEntity<ApiResponse> filterTransactionsByDate(
             @Valid @RequestBody TransactionDateRangeDto dto) {
         List<Transaction> transactions = transactionService.findByWalletIdAndDateBetween(dto);
-        ApiResponse response = new ApiResponse(200, "Transactions fetched successfully", transactions);
+        ApiResponse response = new ApiResponse("success", "Transactions fetched successfully", transactions);
         return ResponseEntity.ok(response);
     }
 
