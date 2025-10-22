@@ -21,13 +21,7 @@ public class GlobalExceptionHandler {
 
         ApiResponse<Object> response = new ApiResponse<>("fail", ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        ApiResponse<Object> response = ApiResponse.builder()
-                .statusCode(HttpStatus.NOT_FOUND.value())
-                .message(ex.getMessage())
-                .data(null)
-                .build();
 
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(EmptyTransactionListException.class)
@@ -36,13 +30,6 @@ public class GlobalExceptionHandler {
         ApiResponse<Object> response = new ApiResponse<>("fail", ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
-        ApiResponse<Object> response = ApiResponse.builder()
-                .statusCode(HttpStatus.NOT_FOUND.value())
-                .message(ex.getMessage())
-                .data(null)
-                .build();
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DateTimeException.class)
@@ -66,33 +53,5 @@ public class GlobalExceptionHandler {
         ApiResponse<Object> response = new ApiResponse<>("fail", "Unexpected error: " + ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
-        ApiResponse<Object> response = ApiResponse.builder()
-                .statusCode(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getMessage())
-                .data(null)
-                .build();
 
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Object>> handleGenericException(Exception ex) {
-        ApiResponse<Object> response = ApiResponse.builder()
-                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message("An unexpected error occurred: " + ex.getMessage())
-                .data(null)
-                .build();
-
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        String errors = ex.getBindingResult().getAllErrors().stream()
-                .map(error -> error.getDefaultMessage())
-                .collect(Collectors.joining(", "));
-
-        ApiResponse response = new ApiResponse(400, "Validation error: " + errors, null);
-        return ResponseEntity.badRequest().body(response);
-    }
 }

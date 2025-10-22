@@ -45,7 +45,7 @@ class WalletServiceImplTest {
 
         walletDto = new WalletDto();
         walletDto.setEmailId("bhooli123@gmail.com");
-        walletDto.setAccountNumber("AC1234");
+        walletDto.setAccountNumber("21091234111");
         walletDto.setBalance(new BigDecimal("1000"));
         walletDto.setBankName("HDFC Bank");
 

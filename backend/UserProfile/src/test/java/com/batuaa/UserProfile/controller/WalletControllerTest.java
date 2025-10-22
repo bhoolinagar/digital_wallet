@@ -52,7 +52,7 @@ public class WalletControllerTest {
 
         walletDto = new WalletDto();
         walletDto.setEmailId("bhooli@gmail.com");
-        walletDto.setAccountNumber("AC1234");
+        walletDto.setAccountNumber("21091234111");
         walletDto.setBankName("HDFC Bank");
         walletDto.setBalance(new BigDecimal("1000"));
 
@@ -64,7 +64,7 @@ public class WalletControllerTest {
 
         wallet = new Wallet();
         wallet.setWalletId("WALB7A0E0285");
-        wallet.setAccountNumber("AC1234");
+        wallet.setAccountNumber("21091234111");
         wallet.setBalance(new BigDecimal("1000"));
         wallet.setBuyer(buyer);
         wallet.setCreatedAt(LocalDateTime.now());
@@ -76,7 +76,7 @@ public class WalletControllerTest {
         when(walletService.linkBankAccountToWallet(any(WalletDto.class)))
                 .thenReturn("WALB7A0E0285");
 
-        String walletJson = "{ \"emailId\": \"bhooli@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"AC1234\" }";
+        String walletJson = "{ \"emailId\": \"bhooli@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"21091234111\" }";
 
         mockMvc.perform(post("/wallet/api/v1/link-bank-account")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +91,7 @@ public class WalletControllerTest {
         when(walletService.linkBankAccountToWallet(any(WalletDto.class)))
                 .thenThrow(new WalletAlreadyFound("Bank account already linked with wallet"));
 
-        String walletJson = "{ \"emailId\": \"bhooli@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"AC1234\" }";
+        String walletJson = "{ \"emailId\": \"bhooli@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"21091234111\" }";
 
         mockMvc.perform(post("/wallet/api/v1/link-bank-account")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +106,7 @@ public class WalletControllerTest {
         when(walletService.linkBankAccountToWallet(any(WalletDto.class)))
                 .thenThrow(new BuyerNotFoundException("Buyer not found with email: invalid@gmail.com"));
 
-        String walletJson = "{ \"emailId\": \"invalid@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"AC1234\" }";
+        String walletJson = "{ \"emailId\": \"invalid@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"21091234111\" }";
 
         // Expect 404 Not Found
         mockMvc.perform(post("/wallet/api/v1/link-bank-account")
