@@ -25,33 +25,33 @@ public class BuyerController {
     private BuyerService buyerService;
 
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerBuyer(@Valid @RequestBody BuyerDto buyerDto) {
-        try {
-            Buyer savedBuyer = buyerService.registerBuyer(buyerDto);
+ @PostMapping("/register")
+ public ResponseEntity<?> registerBuyer(@Valid @RequestBody BuyerDto buyerDto) {
+    try {
+        Buyer savedBuyer = buyerService.registerBuyer(buyerDto);
 
-            BuyerDto responseDto = new BuyerDto();
-            responseDto.setName(savedBuyer.getName());
-            responseDto.setEmailId(savedBuyer.getEmailId());
-            responseDto.setRole(savedBuyer.getRole());
-            responseDto.setPassword(savedBuyer.getPassword());
+        BuyerDto responseDto = new BuyerDto();
+        responseDto.setName(savedBuyer.getName());
+        responseDto.setEmailId(savedBuyer.getEmailId());
+        responseDto.setRole(savedBuyer.getRole());
+        responseDto.setPassword(savedBuyer.getPassword());
 
-            String message = savedBuyer.getRole() == Role.ADMIN
-                    ? "Admin registered successfully" : "Buyer registered successfully";
+        String message = savedBuyer.getRole() == Role.ADMIN
+                ? "Admin registered successfully" : "Buyer registered successfully";
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse("success", message, responseDto));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse("success", message, responseDto));
 
-        } catch (RuntimeException e) {
-            // Handle duplicate email or invalid role
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse("fail", e.getMessage(), null));
-        } catch (Exception e) {
-            // Catch-all fallback (avoid 500 in tests)
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse("fail", "Something went wrong", null));
-        }
+    } catch (RuntimeException e) {
+        // Handle duplicate email or invalid role
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse("fail", e.getMessage(), null));
+    } catch (Exception e) {
+        // Catch-all fallback (avoid 500 in tests)
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse("fail", "Something went wrong", null));
     }
+}
 
 
     // Login Buyer (Returns JWT Token)

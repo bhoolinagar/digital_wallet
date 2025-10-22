@@ -1,5 +1,4 @@
 package com.batuaa.userprofile.exception;
-
 import com.batuaa.userprofile.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,10 +40,9 @@ public class GlobalExceptionHandler {
         ApiResponse response = new ApiResponse("error", "Something went wrong: " + ex.getMessage());
         return ResponseEntity.status(500).body(response);
     }
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse> handleIllegalArgumentException(Exception ex) {
-        ApiResponse response = new ApiResponse("fail", ex.getMessage());
+        ApiResponse response = new ApiResponse("fail",   ex.getMessage());
         return ResponseEntity.status(400).body(response);
     }
 }

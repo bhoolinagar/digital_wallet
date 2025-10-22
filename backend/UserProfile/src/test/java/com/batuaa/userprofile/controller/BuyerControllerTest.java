@@ -1,5 +1,4 @@
 package com.batuaa.userprofile.controller;
-
 import com.batuaa.userprofile.dto.BuyerDto;
 import com.batuaa.userprofile.model.Role;
 import com.batuaa.userprofile.service.BuyerService;
@@ -102,22 +101,22 @@ class BuyerControllerTest {
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
-    // Admin And Buyer login testcase
-    @Test
-    void testBuyerLoginSuccess() throws Exception {
-        buyer.setRole(Role.BUYER);
+// Admin And Buyer login testcase
+@Test
+void testBuyerLoginSuccess() throws Exception {
+    buyer.setRole(Role.BUYER);
 
-        Mockito.when(buyerService.validateBuyer(any(BuyerDto.class))).thenReturn(buyer);
+    Mockito.when(buyerService.validateBuyer(any(BuyerDto.class))).thenReturn(buyer);
 
-        mockMvc.perform(post("/buyers/api/v1/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(buyerDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("success"))
-                .andExpect(jsonPath("$.message").value("Buyer login successful"))
-                .andExpect(jsonPath("$.data.role").value("BUYER"))
-                .andExpect(jsonPath("$.data.token").exists());
-    }
+    mockMvc.perform(post("/buyers/api/v1/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(buyerDto)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("success"))
+            .andExpect(jsonPath("$.message").value("Buyer login successful"))
+            .andExpect(jsonPath("$.data.role").value("BUYER"))
+            .andExpect(jsonPath("$.data.token").exists());
+}
 
     @Test
     void testAdminLoginSuccess() throws Exception {
