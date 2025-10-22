@@ -1,5 +1,7 @@
 package com.batuaa.userprofile.dto;
+
 import java.math.BigDecimal;
+
 public class WalletDto {
     private String emailId;
     private BigDecimal balance;
