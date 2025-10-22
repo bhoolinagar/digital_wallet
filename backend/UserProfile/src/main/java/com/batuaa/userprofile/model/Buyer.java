@@ -36,7 +36,6 @@ public class Buyer {
 	private String password;
 
 	@Enumerated(EnumType.STRING)
-    @NotNull(message = "Role is required")
 	private Role role;
 
     @JsonBackReference  // to avoid bi-cyclic process during db calling

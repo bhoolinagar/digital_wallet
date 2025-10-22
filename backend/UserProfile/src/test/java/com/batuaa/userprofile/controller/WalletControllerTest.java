@@ -1,6 +1,6 @@
 package com.batuaa.userprofile.controller;
 
-import com.batuaa.userprofile.Dto.WalletDto;
+import com.batuaa.userprofile.dto.WalletDto;
 import com.batuaa.userprofile.exception.BuyerNotFoundException;
 import com.batuaa.userprofile.exception.GlobalExceptionHandler;
 import com.batuaa.userprofile.exception.WalletAlreadyFound;

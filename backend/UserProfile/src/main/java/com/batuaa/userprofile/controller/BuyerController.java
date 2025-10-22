@@ -1,7 +1,7 @@
 package com.batuaa.userprofile.controller;
 
-import com.batuaa.userprofile.Dto.ApiResponse;
-import com.batuaa.userprofile.Dto.BuyerDto;
+import com.batuaa.userprofile.dto.ApiResponse;
+import com.batuaa.userprofile.dto.BuyerDto;
 
 import com.batuaa.userprofile.config.JwtUtil;
 import com.batuaa.userprofile.model.Buyer;
@@ -24,28 +24,9 @@ public class BuyerController {
     @Autowired
     private BuyerService buyerService;
 
-     //Register Buyer
-//    @PostMapping("/register")
-//    public ResponseEntity<?> registerBuyer(@Valid @RequestBody BuyerDto buyerDto) {
-//        try {
-//            Buyer savedBuyer = buyerService.registerBuyer(buyerDto);
-//
-//            // Map the role from saved entity to DTO
-//            buyerDto.setRole(savedBuyer.getRole());
-//
-//            return new ResponseEntity<>(savedBuyer, HttpStatus.CREATED);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-////    }
-//    @PostMapping("/register")
-//    public ResponseEntity<?> registerBuyer(@Valid @RequestBody BuyerDto buyerDto) {
-//        Buyer savedBuyer = buyerService.registerBuyer(buyerDto);
-//        buyerDto.setRole(savedBuyer.getRole());
-//        return new ResponseEntity<>(buyerDto, HttpStatus.CREATED);
-//    }
-@PostMapping("/register")
-public ResponseEntity<?> registerBuyer(@Valid @RequestBody BuyerDto buyerDto) {
+
+ @PostMapping("/register")
+ public ResponseEntity<?> registerBuyer(@Valid @RequestBody BuyerDto buyerDto) {
     try {
         Buyer savedBuyer = buyerService.registerBuyer(buyerDto);
 
@@ -56,8 +37,7 @@ public ResponseEntity<?> registerBuyer(@Valid @RequestBody BuyerDto buyerDto) {
         responseDto.setPassword(savedBuyer.getPassword());
 
         String message = savedBuyer.getRole() == Role.ADMIN
-                ? "Admin registered successfully"
-                : "Buyer registered successfully";
+                ? "Admin registered successfully" : "Buyer registered successfully";
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse("success", message, responseDto));
@@ -76,26 +56,14 @@ public ResponseEntity<?> registerBuyer(@Valid @RequestBody BuyerDto buyerDto) {
 
     // Login Buyer (Returns JWT Token)
     @PostMapping("/login")
-//    public ResponseEntity<?> loginBuyer(@RequestBody BuyerDto buyerDto) {
-//        Buyer buyer = buyerService.validateBuyer(buyerDto);
-//        if (buyer != null) {
-//            Map<String, String> tokenData = JwtUtil.generateToken(
-//                    buyer.getEmailId(),
-//                    "BUYER" // role
-//            );
-//            return new ResponseEntity<>(tokenData, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>("Invalid credentials", HttpStatus.FORBIDDEN);
-//        }
-//    }
     public ResponseEntity<?> loginBuyer(@RequestBody BuyerDto buyerDto) {
         // Validate user credentials
         Buyer buyer = buyerService.validateBuyer(buyerDto);
 
         if (buyer != null) {
             // Generate JWT token
-            //String roleName = buyer.getRole().name();
-            String token = JwtUtil.generateToken( buyer.getEmailId(), buyer.getRole().name()     );
+
+            String token = JwtUtil.generateToken(buyer.getEmailId(), buyer.getRole().name());
 
 
             // Role-based message

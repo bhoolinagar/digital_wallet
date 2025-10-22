@@ -1,6 +1,6 @@
 package com.batuaa.userprofile.service;
 
-import com.batuaa.userprofile.Dto.WalletDto;
+import com.batuaa.userprofile.dto.WalletDto;
 import com.batuaa.userprofile.model.Wallet;
 
 import java.math.BigDecimal;

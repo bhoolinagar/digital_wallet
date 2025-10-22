@@ -1,5 +1,5 @@
 package com.batuaa.userprofile.exception;
-import com.batuaa.userprofile.Dto.ApiResponse;
+import com.batuaa.userprofile.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -1,7 +1,7 @@
 package com.batuaa.userprofile.controller;
 
-import com.batuaa.userprofile.Dto.ApiResponse;
-import com.batuaa.userprofile.Dto.WalletDto;
+import com.batuaa.userprofile.dto.ApiResponse;
+import com.batuaa.userprofile.dto.WalletDto;
 import com.batuaa.userprofile.model.Wallet;
 import com.batuaa.userprofile.service.WalletService;
 import lombok.extern.slf4j.Slf4j;

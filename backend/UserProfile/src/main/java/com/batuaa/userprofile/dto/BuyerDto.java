@@ -1,4 +1,4 @@
-package com.batuaa.userprofile.Dto;
+package com.batuaa.userprofile.dto;
 
 import com.batuaa.userprofile.model.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +18,7 @@ public class BuyerDto {
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
-    @NotNull(message = "Role is required")
+    @NotNull(message = "Role must be provided (ADMIN or BUYER)")
     @JsonProperty("Role")
     private Role role;
 
@@ -51,7 +51,5 @@ public class BuyerDto {
         return role;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
+    public void setRole(Role role) { this.role = role; }
 }

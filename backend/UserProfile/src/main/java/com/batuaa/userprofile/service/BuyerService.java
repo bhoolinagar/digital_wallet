@@ -1,7 +1,7 @@
 package com.batuaa.userprofile.service;
 
 
-import com.batuaa.userprofile.Dto.BuyerDto;
+import com.batuaa.userprofile.dto.BuyerDto;
 import com.batuaa.userprofile.model.Buyer;
 public interface BuyerService {
 

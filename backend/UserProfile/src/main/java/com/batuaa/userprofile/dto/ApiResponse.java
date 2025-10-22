@@ -1,4 +1,4 @@
-package com.batuaa.userprofile.Dto;
+package com.batuaa.userprofile.dto;
 
 public class ApiResponse {
     private String status;

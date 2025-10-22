@@ -1,4 +1,4 @@
-package com.batuaa.userprofile.Dto;
+package com.batuaa.userprofile.dto;
 import java.math.BigDecimal;
 public class WalletDto {
     private String emailId;

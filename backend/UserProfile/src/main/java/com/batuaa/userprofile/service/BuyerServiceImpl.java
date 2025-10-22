@@ -1,8 +1,7 @@
 package com.batuaa.userprofile.service;
 
-import com.batuaa.userprofile.Dto.BuyerDto;
+import com.batuaa.userprofile.dto.BuyerDto;
 import com.batuaa.userprofile.model.Buyer;
-import com.batuaa.userprofile.model.Role;
 import com.batuaa.userprofile.repository.BuyerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,6 +18,10 @@ public class BuyerServiceImpl implements BuyerService {
 
     @Override
     public Buyer registerBuyer(BuyerDto buyerDto) {
+
+        if (buyerDto.getRole() == null) {
+            throw new RuntimeException("Role must be provided (ADMIN or BUYER)");
+        }
         String normalizedEmail = buyerDto.getEmailId().trim().toLowerCase();
 
         if (buyerRepository.existsByEmailIdIgnoreCase(normalizedEmail)) {
@@ -47,10 +50,9 @@ public class BuyerServiceImpl implements BuyerService {
             Buyer buyer = optBuyer.get();
             //if (passwordEncoder.matches(buyerDto.getPassword(), buyer.getPassword())) {
             if (buyer.getPassword().equals(buyerDto.getPassword())) {
-                return buyer; // valid
+                return buyer;
             }
         }
-        return null; // invalid credentials
+        return null;
     }
-
 }
