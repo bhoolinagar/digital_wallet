@@ -1,122 +1,160 @@
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-
-import logo from "../images/mybatuaa.png";
-import personLogo from "../assets/user.png";
-import homeLogo from "../images/home_logo.png";
-import logoutLogo from "../images/logout_logo.png";
-
-import "./Dashboard.css";
+import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+import AdbIcon from '@mui/icons-material/Adb';
 
 export default function Dashboard() {
-  const handleLogout = () => {
-    console.log("Logout clicked");
-    // Example: redirect to login page
-    // window.location.href = "/login";
+
+const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
   };
 
   return (
-    <AppBar
-      position="static"
-      sx={{
-        backgroundColor: "#f3f5f9",
-        width: "99%",
-        margin: "0 auto",
-        borderRadius: 2,
-      }}
-    >
-      <Container
-        maxWidth={false}
-        sx={{
-          width: "100%",
-          paddingX: 2,
-        }}
-      >
-        <Toolbar
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            minHeight: 120,
-          }}
-        >
-          {/* Left: App Logo */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <img
-              src={logo}
-              alt="My Batuaa Logo"
-              style={{ width: 100, height: 100, transform: "scale(.9)" }}
-            />
-          </Box>
+    <div>
+      <h1>Welcome to the Dashboard</h1>
 
-          {/* Center: Home Icon + Dashboard Text */}
-          <Box
+    <AppBar position="static">
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="#app-bar-with-responsive-menu"
             sx={{
-              display: "flex",
-              alignItems: "center",
-              flexDirection: "column",
-              gap: 0.2,
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
             }}
           >
-            <img src={homeLogo} alt="Home" style={{ width: 50, height: 50 }} />
-            <Typography
-              variant="h6"
-              sx={{
-                color: "#0F3A6E",
-                fontSize: 18,
-                fontWeight: 600,
-                letterSpacing: ".1rem",
-                fontFamily: "Roboto Mono, monospace",
-              }}
-            >
-              Dashboard
-            </Typography>
-          </Box>
+            LOGO
+          </Typography>
 
-          {/* Right: User Info */}
-          <Box
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{ display: { xs: 'block', md: 'none' } }}
+            >
+              {pages.map((page) => (
+                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                  <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            href="#app-bar-with-responsive-menu"
             sx={{
-              display: "flex",
-              alignItems: "center",
-              flexDirection: "column",
-              gap: 0.2,
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
             }}
           >
-            <Avatar
-              alt="User Avatar"
-              src={personLogo}
-              sx={{ width: 50, height: 50 }}
-            />
-            <Typography
-              variant="subtitle1"
-              sx={{
-                color: "#0F3A6E",
-                fontFamily: "Roboto Mono, monospace",
-                fontSize: 18,
-                fontWeight: 600,
-              }}
-            >
-              Bhooli Nagar
-            </Typography>
+            LOGO
+          </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {pages.map((page) => (
+              <Button
+                key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                {page}
+              </Button>
+            ))}
           </Box>
-
-          {/* Logout Button */}
-          <Button
-            className="logout-btn"
-            variant="text"
-            startIcon={<img src={logoutLogo} alt="Logout" />}
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
         </Toolbar>
       </Container>
     </AppBar>
+    </div>
   );
 }
