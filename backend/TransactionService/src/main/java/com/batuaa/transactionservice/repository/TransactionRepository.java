@@ -1,4 +1,6 @@
 package com.batuaa.transactionservice.repository;
+
+
 import com.batuaa.transactionservice.model.Status;
 import com.batuaa.transactionservice.model.Transaction;
 import com.batuaa.transactionservice.model.Type;
@@ -7,10 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-
 import org.springframework.lang.NonNull;
-
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -53,7 +52,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             where t.fromWallet.walletId = :walletId and t.toWallet.walletId = :walletId1 and t.type = :type""")
     List<Transaction> findByWalletIdAndType(@Param("walletId") String walletId, @Param("walletId1") String walletId1, @Param("type") Type type);
 
-
-
-
+   @Query("SELECT t from Transaction t where (t.fromWallet.walletId = :walletId OR t.toWallet.walletId = :walletId)" +
+            "AND (t.fromBuyer.emailId = :emailId OR t.toBuyer.emailId = :emailId)" +
+            "ORDER BY t.amount")
+    List<Transaction> findTransactionAmountByWalletAndEmail(@Param("walletId") String walletId ,@Param("emailId") String emailId);
 }

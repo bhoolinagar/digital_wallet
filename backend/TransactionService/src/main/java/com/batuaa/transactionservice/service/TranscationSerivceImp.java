@@ -161,8 +161,8 @@ private final WalletRepository walletRepository;
     }
 
     @Override
-    public List<Transaction> sortTransactionsByAmount(String emailId, String walletId) {
-        return List.of();
+    public List<Transaction> sortTransactionsByAmount(String walletId, String emailId) {
+       return transactionRepository.findTransactionAmountByWalletAndEmail(walletId,emailId);
     }
 
     @Override
