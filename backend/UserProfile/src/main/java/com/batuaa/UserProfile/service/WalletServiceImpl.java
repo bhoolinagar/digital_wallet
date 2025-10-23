@@ -1,12 +1,12 @@
-package com.batuaa.UserProfile.service;
-import com.batuaa.UserProfile.Dto.WalletDto;
-import com.batuaa.UserProfile.exception.BuyerNotFoundException;
-import com.batuaa.UserProfile.exception.WalletAlreadyFound;
-import com.batuaa.UserProfile.exception.WalletNotFoundException;
-import com.batuaa.UserProfile.model.Buyer;
-import com.batuaa.UserProfile.model.Wallet;
-import com.batuaa.UserProfile.repository.BuyerRepository;
-import com.batuaa.UserProfile.repository.WalletRepository;
+package com.batuaa.userprofile.service;
+import com.batuaa.userprofile.dto.WalletDto;
+import com.batuaa.userprofile.exception.BuyerNotFoundException;
+import com.batuaa.userprofile.exception.WalletAlreadyFound;
+import com.batuaa.userprofile.exception.WalletNotFoundException;
+import com.batuaa.userprofile.model.Buyer;
+import com.batuaa.userprofile.model.Wallet;
+import com.batuaa.userprofile.repository.BuyerRepository;
+import com.batuaa.userprofile.repository.WalletRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -100,6 +100,7 @@ public class WalletServiceImpl implements WalletService {
             Wallet walletObj = new Wallet();
             walletObj.setWalletId(walletId);
             walletObj.setAccountNumber(wallet.getAccountNumber());
+            walletObj.setBankName(wallet.getBankName());
             walletObj.setBalance(wallet.getBalance());
             walletObj.setBuyer(buyer);
             walletObj.setCreatedAt(LocalDateTime.now());
@@ -174,5 +175,16 @@ public class WalletServiceImpl implements WalletService {
         }
     }
 
+@Override
+public List<Wallet> getWalletListByBuyer(String email) {
+    Buyer buyer = buyerRepository.findByEmailId(email)
+            .orElseThrow(() -> new BuyerNotFoundException("Buyer not found"));
+
+    List<Wallet> wallets = walletRepository.findAllByBuyer(buyer);
+    if (wallets.isEmpty()) {
+        throw new WalletNotFoundException("No wallets found for this buyer");
+    }
+    return wallets;
+}
 
 }

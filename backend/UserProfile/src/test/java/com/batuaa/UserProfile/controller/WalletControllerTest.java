@@ -1,15 +1,15 @@
-package com.batuaa.UserProfile.controller;
+package com.batuaa.userprofile.controller;
 
-import com.batuaa.UserProfile.Dto.WalletDto;
-import com.batuaa.UserProfile.exception.BuyerNotFoundException;
-import com.batuaa.UserProfile.exception.GlobalExceptionHandler;
-import com.batuaa.UserProfile.exception.WalletAlreadyFound;
-import com.batuaa.UserProfile.exception.WalletNotFoundException;
-import com.batuaa.UserProfile.model.Buyer;
-import com.batuaa.UserProfile.model.Gender;
-import com.batuaa.UserProfile.model.Role;
-import com.batuaa.UserProfile.model.Wallet;
-import com.batuaa.UserProfile.service.WalletService;
+import com.batuaa.userprofile.dto.WalletDto;
+import com.batuaa.userprofile.exception.BuyerNotFoundException;
+import com.batuaa.userprofile.exception.GlobalExceptionHandler;
+import com.batuaa.userprofile.exception.WalletAlreadyFound;
+import com.batuaa.userprofile.exception.WalletNotFoundException;
+import com.batuaa.userprofile.model.Buyer;
+import com.batuaa.userprofile.model.Gender;
+import com.batuaa.userprofile.model.Role;
+import com.batuaa.userprofile.model.Wallet;
+import com.batuaa.userprofile.service.WalletService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -65,6 +66,7 @@ public class WalletControllerTest {
         wallet = new Wallet();
         wallet.setWalletId("WALB7A0E0285");
         wallet.setAccountNumber("AC1234");
+        wallet.setBankName(walletDto.getBankName());
         wallet.setBalance(new BigDecimal("1000"));
         wallet.setBuyer(buyer);
         wallet.setCreatedAt(LocalDateTime.now());
@@ -205,4 +207,53 @@ public class WalletControllerTest {
                 .andExpect(jsonPath("$.status").value("fail"))
                 .andExpect(jsonPath("$.message").value("Wallet not found with ID: " + walletId));
     }
+
+// to get list of wallets by email id
+    @Test
+    void testGetWalletListByBuyer_Success() throws Exception {
+        when(walletService.getWalletListByBuyer("bhooli@gmail.com"))
+                .thenReturn(Collections.singletonList(wallet));
+
+        mockMvc.perform(get("/wallet/api/v1/wallet-list/bhooli@gmail.com")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data[0].walletId").value("WALB7A0E0285"))
+                .andExpect(jsonPath("$.data[0].accountNumber").value("AC1234"))
+                .andExpect(jsonPath("$.data[0].balance").value(1000))
+                .andExpect(jsonPath("$.data[0].bankName").value("HDFC Bank"))
+                .andExpect(jsonPath("$.data[0].buyerEmail").value("bhooli@gmail.com"))
+                .andExpect(jsonPath("$.data[0].buyerName").value("Bhooli"));
+
+        verify(walletService, times(1)).getWalletListByBuyer("bhooli@gmail.com");
+    }
+
+    @Test
+    void testGetWalletListByBuyer_EmptyList() throws Exception {
+        when(walletService.getWalletListByBuyer("empty@gmail.com"))
+                .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/wallet/api/v1/wallet-list/empty@gmail.com")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+        verify(walletService, times(1)).getWalletListByBuyer("empty@gmail.com");
+    }
+
+    @Test
+    void testGetWalletListByBuyer_BuyerNotFound() throws Exception {
+        when(walletService.getWalletListByBuyer("unknown@gmail.com"))
+                .thenThrow(new RuntimeException("Buyer not found"));
+
+        mockMvc.perform(get("/wallet/api/v1/wallet-list/unknown@gmail.com")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value("error"))
+                .andExpect(jsonPath("$.message").value("Something went wrong: Buyer not found"));
+
+        verify(walletService, times(1)).getWalletListByBuyer("unknown@gmail.com");
+    }
+
 }

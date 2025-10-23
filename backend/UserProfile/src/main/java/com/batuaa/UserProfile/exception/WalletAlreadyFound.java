@@ -1,4 +1,4 @@
-package com.batuaa.UserProfile.exception;
+package com.batuaa.userprofile.exception;
 
 public class WalletAlreadyFound  extends RuntimeException{
 

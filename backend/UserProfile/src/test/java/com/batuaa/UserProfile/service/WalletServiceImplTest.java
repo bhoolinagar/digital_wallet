@@ -1,15 +1,15 @@
-package com.batuaa.UserProfile.service;
+package com.batuaa.userprofile.service;
 
-import com.batuaa.UserProfile.Dto.WalletDto;
-import com.batuaa.UserProfile.exception.BuyerNotFoundException;
-import com.batuaa.UserProfile.exception.WalletAlreadyFound;
-import com.batuaa.UserProfile.exception.WalletNotFoundException;
-import com.batuaa.UserProfile.model.Buyer;
-import com.batuaa.UserProfile.model.Gender;
-import com.batuaa.UserProfile.model.Role;
-import com.batuaa.UserProfile.model.Wallet;
-import com.batuaa.UserProfile.repository.BuyerRepository;
-import com.batuaa.UserProfile.repository.WalletRepository;
+import com.batuaa.userprofile.dto.WalletDto;
+import com.batuaa.userprofile.exception.BuyerNotFoundException;
+import com.batuaa.userprofile.exception.WalletAlreadyFound;
+import com.batuaa.userprofile.exception.WalletNotFoundException;
+import com.batuaa.userprofile.model.Buyer;
+import com.batuaa.userprofile.model.Gender;
+import com.batuaa.userprofile.model.Role;
+import com.batuaa.userprofile.model.Wallet;
+import com.batuaa.userprofile.repository.BuyerRepository;
+import com.batuaa.userprofile.repository.WalletRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +39,7 @@ class WalletServiceImplTest {
 
     private WalletDto walletDto;
     private Buyer buyer;
-
+    private Wallet wallet;
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -55,9 +56,23 @@ class WalletServiceImplTest {
         buyer.setGender(Gender.FEMALE);
         buyer.setPassword("password123");
         buyer.setRole(Role.BUYER);
+
+        // Wallet
+        wallet = new Wallet();
+        wallet.setWalletId("WAL123");
+        wallet.setAccountNumber("21091234111");
+        wallet.setBankName("HDFC Bank");
+        wallet.setBalance(new BigDecimal("1000"));
+        wallet.setBuyer(buyer);
     }
 
+    @Test
+    void generateWalletId() {
+    }
 
+    @Test
+    void getWalletDetails() {
+    }
 
     @Test
     void linkBankAccountToWallet_success() {
@@ -169,4 +184,43 @@ class WalletServiceImplTest {
         assertEquals("Wallet not found with ID: " + walletId, exception.getMessage());
     }
 
+
+    // to gel walletList details test cases
+    @Test
+    void testGetWalletListByBuyer_Success() {
+        when(buyerRepository.findByEmailId("bhooli@gmail.com")).thenReturn(Optional.of(buyer));
+        when(walletRepository.findAllByBuyer(buyer)).thenReturn(Collections.singletonList(wallet));
+
+        List<Wallet> result = walletService.getWalletListByBuyer("bhooli@gmail.com");
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("WAL123", result.get(0).getWalletId());
+
+        verify(buyerRepository, times(1)).findByEmailId("bhooli@gmail.com");
+        verify(walletRepository, times(1)).findAllByBuyer(buyer);
+    }
+
+    @Test
+    void testGetWalletListByBuyer_EmptyList() {
+        when(buyerRepository.findByEmailId("bhooli@gmail.com")).thenReturn(Optional.of(buyer));
+        when(walletRepository.findAllByBuyer(buyer)).thenReturn(Collections.emptyList());
+
+        assertThrows(WalletNotFoundException.class, () ->
+                walletService.getWalletListByBuyer("bhooli@gmail.com"));
+
+        verify(buyerRepository, times(1)).findByEmailId("bhooli@gmail.com");
+        verify(walletRepository, times(1)).findAllByBuyer(buyer);
+    }
+
+    @Test
+    void testGetWalletListByBuyer_BuyerNotFound() {
+        when(buyerRepository.findByEmailId("unknown@gmail.com")).thenReturn(Optional.empty());
+
+        assertThrows(BuyerNotFoundException.class, () ->
+                walletService.getWalletListByBuyer("unknown@gmail.com"));
+
+        verify(buyerRepository, times(1)).findByEmailId("unknown@gmail.com");
+        verify(walletRepository, never()).findAllByBuyer(any());
+    }
 }

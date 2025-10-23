@@ -1,11 +1,10 @@
-package com.batuaa.UserProfile.service;
+package com.batuaa.userprofile.service;
 
-import com.batuaa.UserProfile.Dto.WalletDto;
-import com.batuaa.UserProfile.model.Wallet;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.batuaa.userprofile.dto.WalletDto;
+import com.batuaa.userprofile.model.Wallet;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface WalletService {
 	// to generate walletId unique 11 characters with help of( userId,email,
@@ -20,5 +19,7 @@ public interface WalletService {
     public  String linkBankAccountToWallet( WalletDto wallet);
     String updateMoneyFromBank(String walletId,  BigDecimal amount);
 
+    // to get all walletList
+    List<Wallet> getWalletListByBuyer(String email);
 
 }

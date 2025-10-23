@@ -7,25 +7,12 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-
 
 
 @Entity
 @Table(name = "transaction_records") // corrected name for proper mapping with db.
 public class Transaction {
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer transactionId;  // Auto-generated PK
 
@@ -57,17 +44,15 @@ public class Transaction {
 
     private String remarks;
 
-
     public Transaction(int i, BigDecimal bigDecimal, String receivedRs500FromWalletWal4DA22CC6, String success, LocalDateTime localDateTime, Object o, Wallet wal0DC01EF4, Wallet wal2ED73EBA, String mail, String email, Type received) {
 
     }
 
-    public Transaction() {
-
-    }
 
     @Enumerated(EnumType.STRING)
-private Type type;
+    private Type type;
+
+
     public Integer getTransactionId() {
         return transactionId;
     }
@@ -141,12 +126,24 @@ private Type type;
     }
 
 
+    public Transaction(){
+
+    }
+
+    public Transaction(Wallet fromWallet, Wallet toWallet, Buyer fromBuyer, Buyer toBuyer, BigDecimal amount, LocalDateTime timestamp, Status status, String remarks, Type type) {
+        this.fromWallet = fromWallet;
+        this.toWallet = toWallet;
+        this.fromBuyer = fromBuyer;
+        this.toBuyer = toBuyer;
+        this.amount = amount;
+        this.timestamp = timestamp;
+        this.status = status;
+        this.remarks = remarks;
+        this.type = type;
+    }
+
     public Transaction(Integer transactionId, Wallet fromWallet, Wallet toWallet, Buyer fromBuyer, Buyer toBuyer, BigDecimal amount, LocalDateTime timestamp, Status status, String remarks, Type type) {
 
-public Transaction(){
-
-}
-    public Transaction(Integer transactionId, Wallet fromWallet, Wallet toWallet, Buyer fromBuyer, Buyer toBuyer, BigDecimal amount, LocalDateTime timestamp, Status status, String remarks) {
         this.transactionId = transactionId;
         this.fromWallet = fromWallet;
         this.toWallet = toWallet;
@@ -168,4 +165,11 @@ public Transaction(){
         this.type = type;
 
     }
+
+
+    //new Transaction(walletFrom, walletTo, walletFrom.getBuyer(), walletTo.getBuyer(),
+    //                    transferDto.getAmount(), LocalDateTime.now(), Status.PROCESSING,
+    //                    "Initiating transfer of Rs " + transferDto.getAmount() + " to wallet " +
+    //                    transferDto.getToWalletId(),
+    //                    Type.WITHDRAWN);
 }

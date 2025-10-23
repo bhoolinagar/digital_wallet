@@ -1,12 +1,21 @@
-package com.batuaa.UserProfile.exception;
-import com.batuaa.UserProfile.Dto.ApiResponse;
-import org.springframework.http.HttpStatus;
+package com.batuaa.userprofile.exception;
+import com.batuaa.userprofile.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    // Handle validation errors (from @Valid in DTO)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
+        ApiResponse response = new ApiResponse("fail", errorMessage);
+        return ResponseEntity.badRequest().body(response);
+    }
+
     @ExceptionHandler(WalletNotFoundException.class)
     public ResponseEntity<ApiResponse> handleWalletNotFound(WalletNotFoundException ex) {
         ApiResponse response = new ApiResponse("fail", ex.getMessage());

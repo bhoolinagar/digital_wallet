@@ -1,13 +1,10 @@
-package com.batuaa.UserProfile.model;
+package com.batuaa.userprofile.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-
 
 
 @Entity
