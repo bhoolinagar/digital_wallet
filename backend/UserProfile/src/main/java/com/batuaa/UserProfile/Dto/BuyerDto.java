@@ -2,7 +2,10 @@ package com.batuaa.userprofile.dto;
 
 import com.batuaa.userprofile.model.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class BuyerDto {
 
@@ -26,20 +29,20 @@ public class BuyerDto {
         return emailId;
     }
 
+    public void setEmailId(String emailId) {
+        this.emailId = emailId != null ? emailId.trim().toLowerCase() : null;
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-
-    public void setEmailId(String emailId) {
-    this.emailId = emailId != null ? emailId.trim().toLowerCase() : null;
-    }
     public void setName(String name) {
         this.name = name != null ? name.trim() : null;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {
@@ -51,5 +54,7 @@ public class BuyerDto {
         return role;
     }
 
-    public void setRole(Role role) { this.role = role; }
+    public void setRole(Role role) {
+        this.role = role;
+    }
 }

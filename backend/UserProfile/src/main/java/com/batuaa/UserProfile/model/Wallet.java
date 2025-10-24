@@ -1,4 +1,5 @@
 package com.batuaa.userprofile.model;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -11,15 +12,15 @@ import java.time.LocalDateTime;
 @Table(name = "wallet_records")
 public class Wallet {
 
-	@Id
-	@Column(name = "wallet_id", nullable = false, unique = true)
-	private String walletId;
+    @Id
+    @Column(name = "wallet_id", nullable = false, unique = true)
+    private String walletId;
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "buyer_email", referencedColumnName = "emailId")// maps to User.userId
-	private Buyer buyer;
+    private Buyer buyer;
     private LocalDateTime createdAt;
-	private BigDecimal balance;
+    private BigDecimal balance;
     private String bankName;
     @NotNull
     private String accountNumber;

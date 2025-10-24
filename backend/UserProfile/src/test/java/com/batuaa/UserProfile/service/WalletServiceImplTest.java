@@ -40,6 +40,7 @@ class WalletServiceImplTest {
     private WalletDto walletDto;
     private Buyer buyer;
     private Wallet wallet;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -86,8 +87,8 @@ class WalletServiceImplTest {
 
         // Assertions
         assertNotNull(walletId);
-       // assertTrue(walletId.startsWith("WAL"));          // Wallet ID prefix
-       // assertEquals(12, walletId.length());             // 12-character ID
+        // assertTrue(walletId.startsWith("WAL"));          // Wallet ID prefix
+        // assertEquals(12, walletId.length());             // 12-character ID
 
         // Verify save is called
         verify(walletRepository, times(1)).save(any(Wallet.class));
@@ -115,6 +116,7 @@ class WalletServiceImplTest {
 
         assertEquals("Buyer not registered with this email ID", exception.getMessage());
     }
+
     @Test
     void updateMoneyFromBank_success() {
         // Arrange

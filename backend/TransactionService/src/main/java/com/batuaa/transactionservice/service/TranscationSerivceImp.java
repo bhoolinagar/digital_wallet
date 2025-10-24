@@ -247,8 +247,7 @@ public TranscationSerivceImp(TransactionRepository transactionRepository, Wallet
 
     @Override
     public List<Transaction> getAllTransactions(String emailId, String walletId) {
-
-        List<Transaction> result = transactionRepository.findByEmailAndWallet(emailId, walletId);
+        List<Transaction> result = transactionRepository.findByEmailAndWallet(emailId, emailId, walletId, walletId);
 
         if (result.isEmpty()) {
             throw new EmptyTransactionListException("No transactions found for wallet: " + walletId);
@@ -261,9 +260,13 @@ public TranscationSerivceImp(TransactionRepository transactionRepository, Wallet
     }
 
     @Override
-    public List<Transaction> sortTransactionsByAmount(String emailId, String walletId) {
-
-        return List.of();
+    public List<Transaction> sortTransactionsByAmount(String walletId, String emailId, String sortOrder) {
+        List<Transaction> transactionList = transactionRepository.findTransactionAmountByWalletAndEmail(walletId, emailId);
+        if ("DESC".equalsIgnoreCase(sortOrder)) {
+            return transactionList.stream().sorted(Comparator.comparing(Transaction::getAmount).reversed()).collect(Collectors.toList());
+        } else {
+            return transactionList.stream().sorted(Comparator.comparing(Transaction::getAmount)).collect(Collectors.toList());
+        }
     }
 
     @Override
