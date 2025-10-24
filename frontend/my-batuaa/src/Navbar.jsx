@@ -15,7 +15,6 @@ import logoutLogo from "../src/images/logout_logo.png";
 import "./Navbar.css"
 import { Wallet } from "@mui/icons-material";
 
-
 export default function Navbar() {  
     
   const handleLogout = () => {
@@ -113,16 +112,15 @@ export default function Navbar() {
           </Box>
 
           {/* Logout Button */}
-          <Button
+          <Button sx={{ fontSize:"16", color:'#043253ff' , fontWeight:" 600"}}
             className="logout-btn"
             variant="text"
             startIcon={<img src={logoutLogo} alt="Logout" />}
             onClick={handleLogout}
           >
-
-            Logout
+ Logout
             <nav>
-              <Link to="/wallets">Wallet button</Link>
+            
             </nav>
           </Button>
         </Toolbar>
