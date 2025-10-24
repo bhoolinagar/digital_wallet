@@ -128,10 +128,10 @@ public class TransactionController {
      * View transactions sorted by amount (ascending or descending)
      */
     @GetMapping("/view-transactions-by-amount")
-    public ResponseEntity<?> viewTransactionsByAmount(@RequestParam String walletId,
-                                                      @RequestParam(defaultValue = "DESC") String sortOrder) {
-        log.info("Fetching transactions by amount for walletId: {} sorted by: {}", walletId, sortOrder);
-        return ResponseEntity.ok(transactionService.sortTransactionsByAmount(walletId, sortOrder));
+    public ResponseEntity<?> viewTransactionsByAmount(@RequestParam String walletId, @RequestParam String emailId
+            , @RequestParam(defaultValue = "DESC") String sortOrder) {
+        log.info("Fetching transactions by amount for walletId: {} sorted by: {}", walletId, emailId);
+        return ResponseEntity.ok(transactionService.sortTransactionsByAmount(walletId, emailId, sortOrder));
     }
 
     /**

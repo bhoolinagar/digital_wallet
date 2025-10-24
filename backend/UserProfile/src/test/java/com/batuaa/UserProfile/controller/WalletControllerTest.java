@@ -10,7 +10,6 @@ import com.batuaa.userprofile.model.Gender;
 import com.batuaa.userprofile.model.Role;
 import com.batuaa.userprofile.model.Wallet;
 import com.batuaa.userprofile.service.WalletService;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,9 +24,10 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class WalletControllerTest {
 
@@ -102,6 +102,7 @@ public class WalletControllerTest {
                 .andExpect(jsonPath("$.status").value("fail"))
                 .andExpect(jsonPath("$.message").value("Bank account already linked with wallet"));
     }
+
     @Test
     void linkBankAccount_failure_buyerNotFound() throws Exception {
         // Mock service to throw BuyerNotFoundException when buyer doesn't exist
@@ -208,7 +209,7 @@ public class WalletControllerTest {
                 .andExpect(jsonPath("$.message").value("Wallet not found with ID: " + walletId));
     }
 
-// to get list of wallets by email id
+    // to get list of wallets by email id
     @Test
     void testGetWalletListByBuyer_Success() throws Exception {
         when(walletService.getWalletListByBuyer("bhooli@gmail.com"))

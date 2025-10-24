@@ -8,7 +8,6 @@ import com.batuaa.userprofile.service.WalletService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +20,7 @@ import java.util.List;
 public class WalletController {
     @Autowired
     private final WalletService walletService;
+
     @Autowired
     public WalletController(WalletService walletService) {
         this.walletService = walletService;
@@ -51,7 +51,7 @@ public class WalletController {
             @RequestParam String walletId) {
 
         Wallet wallet = walletService.getWalletDetails(email, walletId);
-        log.info("Wallet balance: "+wallet.getBalance());
+        log.info("Wallet balance: " + wallet.getBalance());
         return ResponseEntity.ok(new ApiResponse("success", "Wallet details fetched successfully", wallet));
     }
 

@@ -9,6 +9,7 @@ import com.batuaa.transactionservice.exception.GlobalExceptionHandler;
 import com.batuaa.transactionservice.exception.WalletNotFoundException;
 import com.batuaa.transactionservice.model.*;
 import com.batuaa.transactionservice.service.TransactionService;
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,16 +26,19 @@ import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @Slf4j
 public class TransactionControllerTest {
@@ -56,6 +60,7 @@ public class TransactionControllerTest {
     private Buyer fromBuyer;
     private Transaction senderTransaction;
 
+    private List<Transaction> mockTransactions;
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -203,6 +208,57 @@ public class TransactionControllerTest {
         transactionList = new ArrayList<>();
         transactionList.add(senderTransaction);
 
+
+        // Mock transaction data
+        transactions = List.of(
+                new Transaction(15, new Wallet("WAL0DC01EF4"), new Wallet("WAL2ED73EBA"),
+                        null, null,
+                        new BigDecimal("500.00"),
+                        LocalDateTime.of(2025, 10, 15, 15, 27, 48),
+                        Status.SUCCESS,
+                        "Received Rs500 from wallet WAL4DA22CC6",
+                        Type.RECEIVED),
+
+                new Transaction(16, new Wallet("WAL0DC01EF4"), new Wallet("WAL2ED73EBA"),
+                        null, null,
+                        new BigDecimal("200.00"),
+                        LocalDateTime.of(2025, 10, 15, 15, 28, 15),
+                        Status.SUCCESS,
+                        "Transferred Rs200 to wallet WAL4DE74491",
+                        Type.WITHDRAWN),
+
+                new Transaction(17, new Wallet("WAL0DC01EF4"), new Wallet("WAL4C9D9DC6"),
+                        null, null,
+                        new BigDecimal("200.00"),
+                        LocalDateTime.of(2025, 10, 15, 15, 28, 15),
+                        Status.SUCCESS,
+                        "Received Rs200 from wallet WAL4DA22CC6",
+                        Type.RECEIVED),
+
+                new Transaction(18, new Wallet("WAL0DC01EF4"), new Wallet("WAL4DA22CC6"),
+                        null, null,
+                        new BigDecimal("500.00"),
+                        LocalDateTime.of(2025, 10, 16, 0, 55, 55),
+                        Status.SUCCESS,
+                        "Money added to wallet WALF729C2F",
+                        Type.WITHDRAWN)
+        );
+
+        // Mock DTO for type filtering
+        transactionTypeDto = new TransactionTypeDto();
+        transactionTypeDto.setWalletId("WAL0DC01EF4");
+        transactionTypeDto.setEmailId("bhoolinagar@gmail.com");
+        transactionTypeDto.setType(Type.RECEIVED);
+
+
+        mockTransactions = Arrays.asList(
+                new Transaction(1, null, null, null, null,
+                        new BigDecimal("200.00"), LocalDateTime.now(),
+                        Status.SUCCESS, "OK", Type.RECEIVED),
+                new Transaction(2, null, null, null, null,
+                        new BigDecimal("500.00"), LocalDateTime.now(),
+                        Status.SUCCESS, "OK", Type.RECEIVED)
+        );
     }
 
 
@@ -332,7 +388,15 @@ public class TransactionControllerTest {
                         .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("fail"))
-                .andExpect(jsonPath("$.message").value("Start date cannot be in the future, End date cannot be in the future"));
+                .andExpect(result -> {
+                    String message = JsonPath.read(result.getResponse().getContentAsString(), "$.message");
+                    assertTrue(
+                            message.contains("Start date cannot be in the future") &&
+                                    message.contains("End date cannot be in the future")
+                    );
+                });
+        //.andExpect(jsonPath("$.message").value("Start date cannot be in the future, End date cannot be in the future"));
+        // .andExpect(jsonPath("$.message").value(new DateTimeException("Start date cannot be in the future, End date cannot be in the future")));
     }
 
 
@@ -467,7 +531,15 @@ public class TransactionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(jsonPath("$.status").value("fail"))
-                .andExpect(jsonPath("$.message").value("Sender email cannot be blank, Receiver email cannot be blank"))
+
+                .andExpect(result -> {
+                    String message = JsonPath.read(result.getResponse().getContentAsString(), "$.message");
+                    assertTrue(
+                            message.contains("Sender email cannot be blank") &&
+                                    message.contains("Receiver email cannot be blank")
+                    );
+                })
+                //    .andExpect(jsonPath("$.message").value("Sender email cannot be blank, Receiver email cannot be blank"))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
@@ -587,5 +659,23 @@ public class TransactionControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
+
+    @Test
+    void testViewTransactionsByAmount_Success() throws Exception {
+        when(transactionService.sortTransactionsByAmount(anyString(), anyString(), anyString()))
+                .thenReturn(mockTransactions);
+
+        mockMvc.perform(get("/transaction/api/v2/view-transactions-by-amount")
+                        .param("walletId", "WAL123")
+                        .param("emailId", "user@example.com")
+                        .param("sortOrder", "DESC")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].amount").value(200.00))
+                .andExpect(jsonPath("$[1].amount").value(500.00));
+
+        verify(transactionService, times(1))
+                .sortTransactionsByAmount(anyString(), anyString(), anyString());
+    }
 
 }

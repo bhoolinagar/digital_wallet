@@ -27,8 +27,7 @@ public interface TransactionService {
     List<Transaction> getAllTransactions(String emailId, String walletId);
 
     // Sort transactions by amount (ascending or descending)
-    List<Transaction> sortTransactionsByAmount(String emailId, String walletId);
-
+    List<Transaction> sortTransactionsByAmount(String walletId, String emailId, String sortOrder);
     // Get a single transaction by walletId and email
     Transaction getTransactionByWalletId(String emailId, String walletId);
 

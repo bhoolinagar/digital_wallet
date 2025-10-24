@@ -23,10 +23,7 @@ import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -67,7 +64,8 @@ public class TransactionServiceTest {
     private Wallet walletTo_s;
     private Transaction transaction;
     private List<Transaction> transactionList;
-
+    private Buyer buyer;
+    private List<Transaction> transactionslist;
 
     @BeforeEach
     void setUp() {
@@ -201,6 +199,21 @@ public class TransactionServiceTest {
 
         transactionList = new ArrayList<>();
         transactionList.add(transaction);
+
+//antima mock data
+        Wallet wallet = new Wallet(); // you can use no-arg constructor
+        wallet.setWalletId("wallet1");
+
+        buyer = new Buyer();
+        buyer.setEmailId("email@example.com");
+        transactionslist = Arrays.asList(
+                new Transaction(1, wallet, null, buyer, null, new BigDecimal("200.00"),
+                        LocalDateTime.now(), Status.SUCCESS, "OK", Type.RECEIVED),
+                new Transaction(2, wallet, null, buyer, null, new BigDecimal("500.00"),
+                        LocalDateTime.now(), Status.SUCCESS, "OK", Type.RECEIVED),
+                new Transaction(3, wallet, null, buyer, null, new BigDecimal("100.00"),
+                        LocalDateTime.now(), Status.SUCCESS, "OK", Type.RECEIVED)
+        );
 
 
     }
@@ -552,11 +565,11 @@ public class TransactionServiceTest {
             throws EmptyTransactionListException {
 
         transactionRepository.save(transaction);
-        when(transactionRepository.findByEmailAndWallet("sakshi@gmail.com", "WALLET001")).thenReturn(transactionList);
+        when(transactionRepository.findByEmailAndWallet("sakshi@gmail.com", "sakshi@gmail.com", "WALLET001", "WALLET001")).thenReturn(transactionList);
         List<Transaction> transactionList1 = transactionService.getAllTransactions("sakshi@gmail.com", "WALLET001");
         assertEquals(transactionList, transactionList1);
         verify(transactionRepository, times(1)).save(transaction);
-        verify(transactionRepository, times(1)).findByEmailAndWallet("sakshi@gmail.com", "WALLET001");
+        verify(transactionRepository, times(1)).findByEmailAndWallet("sakshi@gmail.com", "sakshi@gmail.com", "WALLET001", "WALLET001");
 
     }
 
@@ -588,6 +601,46 @@ public class TransactionServiceTest {
         assertEquals("Admin not found with email: " + email, ex.getMessage());
 
         verify(transactionRepository, never()).findAll();
+    }
+
+
+    // Transaction amount
+
+    @Test
+    void testSortTransactionsByAmountAscending() {
+        when(transactionRepository.findTransactionAmountByWalletAndEmail("wallet1", "email@example.com"))
+                .thenReturn(transactionslist);
+
+        List<Transaction> sorted = transactionService.sortTransactionsByAmount("wallet1", "email@example.com", "ASC");
+
+        assertEquals(3, sorted.size());
+        assertEquals(new BigDecimal("100.00"), sorted.get(0).getAmount());
+        assertEquals(new BigDecimal("200.00"), sorted.get(1).getAmount());
+        assertEquals(new BigDecimal("500.00"), sorted.get(2).getAmount());
+    }
+
+    @Test
+    void testSortTransactionsByAmountDescending() {
+        when(transactionRepository.findTransactionAmountByWalletAndEmail("wallet1", "email@example.com"))
+                .thenReturn(transactionslist);
+
+        List<Transaction> sorted = transactionService.sortTransactionsByAmount("wallet1", "email@example.com", "DESC");
+
+        assertEquals(3, sorted.size());
+        assertEquals(new BigDecimal("500.00"), sorted.get(0).getAmount());
+        assertEquals(new BigDecimal("200.00"), sorted.get(1).getAmount());
+        assertEquals(new BigDecimal("100.00"), sorted.get(2).getAmount());
+    }
+
+    @Test
+    void testSortTransactionsByAmountInvalidSortOrderDefaultsToAscending() {
+        when(transactionRepository.findTransactionAmountByWalletAndEmail("wallet1", "email@example.com"))
+                .thenReturn(transactionslist);
+
+        List<Transaction> sorted = transactionService.sortTransactionsByAmount("wallet1", "email@example.com", "INVALID");
+
+        // Should behave as ascending
+        assertEquals(new BigDecimal("100.00"), sorted.get(0).getAmount());
     }
 
 }

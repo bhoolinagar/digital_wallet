@@ -61,11 +61,25 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 
     Optional<Transaction> findByFromWalletAndToWalletAndAmountAndStatus(Wallet walletFrom, Wallet walletTo, BigDecimal amount, Status status);
 
-    @Query(value = "SELECT * FROM transaction_records " +
+  /*  @Query(value = "SELECT * FROM transaction_records " +
             "WHERE from_email_id = ?1 " +
             "AND (from_wallet_id = ?2 OR to_wallet_id = ?2)",
             nativeQuery = true)
     List<Transaction> findByEmailAndWallet(String emailId, String walletId);
+
+
+   */
+
+
+    @Query("SELECT t from Transaction t where (t.fromWallet.walletId = :walletId OR t.toWallet.walletId = :walletId)" +
+            "AND (t.fromBuyer.emailId = :emailId OR t.toBuyer.emailId = :emailId)" +
+            "ORDER BY t.amount")
+    List<Transaction> findTransactionAmountByWalletAndEmail(@Param("walletId") String walletId, @Param("emailId") String emailId);
+
+    @Query("""
+            select t from Transaction t
+            where upper(t.fromWallet.buyer.emailId) = upper(:emailId) or upper(t.toWallet.buyer.emailId) = upper(:emailId1) and upper(t.fromWallet.walletId) = upper(:walletId) or upper(t.toWallet.walletId) = upper(:walletId1)""")
+    List<Transaction> findByEmailAndWallet(@Param("emailId") String emailId, @Param("emailId1") String emailId1, @Param("walletId") String walletId, @Param("walletId1") String walletId1);
 
 
 }

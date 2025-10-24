@@ -9,37 +9,32 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 @Entity
-@Table(name="buyer_records")
+@Table(name = "buyer_records")
 public class Buyer {
-	/*
-	 * id <PK> : Integer String email name: Name gender: enum mobileNumber : int
-	 * address: String anual_Income: String password: String(min 8 -12 digit)
-	 * ADMIN/BUYER : enum(Role)
-	 * 
-	 */
-
-	@Id
-    @Email
-	@Column(nullable = false, unique = true)
-	private String emailId;
-
-	@NotBlank
-	private String name;
-
-	@Enumerated(EnumType.STRING)
-	private Gender gender;
-
-	// Store hashed password only, not plain text
-	@Size(min = 8, max = 12, message = "Password must be between 8 and 12 characters")
-	@Column(nullable = false)
-	private String password;
-
-	@Enumerated(EnumType.STRING)
-	private Role role;
+    /*
+     * id <PK> : Integer String email name: Name gender: enum mobileNumber : int
+     * address: String anual_Income: String password: String(min 8 -12 digit)
+     * ADMIN/BUYER : enum(Role)
+     *
+     */
 
     @JsonBackReference  // to avoid bi-cyclic process during db calling
     @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Wallet> walletList;
+    @Id
+    @Email
+    @Column(nullable = false, unique = true)
+    private String emailId;
+    @NotBlank
+    private String name;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+    // Store hashed password only, not plain text
+    @Size(min = 8, max = 12, message = "Password must be between 8 and 12 characters")
+    @Column(nullable = false)
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public String getEmailId() {
         return emailId;

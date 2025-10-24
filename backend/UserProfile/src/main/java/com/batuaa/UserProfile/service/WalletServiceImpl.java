@@ -1,4 +1,5 @@
 package com.batuaa.userprofile.service;
+
 import com.batuaa.userprofile.dto.WalletDto;
 import com.batuaa.userprofile.exception.BuyerNotFoundException;
 import com.batuaa.userprofile.exception.WalletAlreadyFound;
@@ -34,8 +35,8 @@ public class WalletServiceImpl implements WalletService {
         this.buyerRepository = buyerRepository;
     }
 
-	// to generate walletId unique 11 characters with help of( userId,email,
-	// accountNumber)
+    // to generate walletId unique 11 characters with help of( userId,email,
+    // accountNumber)
     @Override
     public String generateWalletId(String email, String accountNumber) {
         try {
@@ -175,16 +176,16 @@ public class WalletServiceImpl implements WalletService {
         }
     }
 
-@Override
-public List<Wallet> getWalletListByBuyer(String email) {
-    Buyer buyer = buyerRepository.findByEmailId(email)
-            .orElseThrow(() -> new BuyerNotFoundException("Buyer not found"));
+    @Override
+    public List<Wallet> getWalletListByBuyer(String email) {
+        Buyer buyer = buyerRepository.findByEmailId(email)
+                .orElseThrow(() -> new BuyerNotFoundException("Buyer not found"));
 
-    List<Wallet> wallets = walletRepository.findAllByBuyer(buyer);
-    if (wallets.isEmpty()) {
-        throw new WalletNotFoundException("No wallets found for this buyer");
+        List<Wallet> wallets = walletRepository.findAllByBuyer(buyer);
+        if (wallets.isEmpty()) {
+            throw new WalletNotFoundException("No wallets found for this buyer");
+        }
+        return wallets;
     }
-    return wallets;
-}
 
 }

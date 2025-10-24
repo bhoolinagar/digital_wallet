@@ -1,7 +1,12 @@
 package com.batuaa.userprofile.dto;
-import jakarta.validation.constraints.*;
+
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
+
 public class WalletDto {
 
 
@@ -23,28 +28,28 @@ public class WalletDto {
         return emailId;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public String getBankName() {
-        return bankName;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
     public void setEmailId(String emailId) {
         this.emailId = emailId;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
     }
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 
+    public String getBankName() {
+        return bankName;
+    }
+
     public void setBankName(String bankName) {
         this.bankName = bankName;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
     public void setAccountNumber(String accountNumber) {
