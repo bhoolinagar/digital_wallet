@@ -1,7 +1,10 @@
 package com.batuaa.userprofile;
 
+import com.batuaa.userprofile.filter.BuyerFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class UserProfileApplication {
@@ -11,4 +14,13 @@ public class UserProfileApplication {
     }
 
 
+    @Bean
+    public FilterRegistrationBean getFilter()
+    {
+        FilterRegistrationBean filterbean=new FilterRegistrationBean();
+        filterbean.setFilter(new BuyerFilter());
+        filterbean.addUrlPatterns("/wallet/api/v1/*");
+        return filterbean;
+
+    }
 }

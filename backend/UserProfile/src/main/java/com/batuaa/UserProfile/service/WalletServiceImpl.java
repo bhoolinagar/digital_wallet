@@ -1,5 +1,4 @@
 package com.batuaa.userprofile.service;
-
 import com.batuaa.userprofile.dto.WalletDto;
 import com.batuaa.userprofile.exception.BuyerNotFoundException;
 import com.batuaa.userprofile.exception.WalletAlreadyFound;
