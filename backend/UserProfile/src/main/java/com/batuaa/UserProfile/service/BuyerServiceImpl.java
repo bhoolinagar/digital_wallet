@@ -41,6 +41,7 @@ public class BuyerServiceImpl implements BuyerService {
     @Override
     public Buyer validateBuyer(BuyerDto buyerDto) {
         String normalizedEmail = buyerDto.getEmailId().trim().toLowerCase();
+
         Optional<Buyer> optBuyer = buyerRepository.findByEmailId(normalizedEmail);
 
         if (optBuyer.isPresent()) {

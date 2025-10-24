@@ -1,6 +1,7 @@
 package com.batuaa.transactionservice.exception;
 
 import com.batuaa.transactionservice.dto.ApiResponse;
+import jakarta.servlet.ServletException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -88,6 +89,22 @@ public class GlobalExceptionHandler {
 
         ApiResponse<Object> response = new ApiResponse<>("fail", ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+    }
+    // for handle jwt token is missing
+@ExceptionHandler(JwtTokenMissingException.class)
+public ResponseEntity<ApiResponse<Object>> handleJwtTokenNotfound(JwtTokenMissingException ex) {
+
+    ApiResponse<Object> response = new ApiResponse<>("fail", ex.getMessage(), null);
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+
+}
+// Servlet response not found
+    @ExceptionHandler(ServletException.class)
+    public ResponseEntity<ApiResponse<Object>> handleServletNotfound(JwtTokenMissingException ex) {
+
+        ApiResponse<Object> response = new ApiResponse<>("fail", ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 
     }
 
