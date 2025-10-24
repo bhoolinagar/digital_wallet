@@ -161,8 +161,14 @@ private final WalletRepository walletRepository;
     }
 
     @Override
-    public List<Transaction> sortTransactionsByAmount(String walletId, String emailId) {
-       return transactionRepository.findTransactionAmountByWalletAndEmail(walletId,emailId);
+    public List<Transaction> sortTransactionsByAmount(String walletId, String emailId,String sortOrder) {
+    List<Transaction> transactionList= transactionRepository.findTransactionAmountByWalletAndEmail(walletId,emailId);
+       if("DESC".equalsIgnoreCase(sortOrder)){
+           return transactionList.stream().sorted(Comparator.comparing(Transaction::getAmount).reversed()).collect(Collectors.toList());
+       }
+       else{
+           return transactionList.stream().sorted(Comparator.comparing(Transaction::getAmount)).collect(Collectors.toList());
+       }
     }
 
     @Override

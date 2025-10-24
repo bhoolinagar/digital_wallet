@@ -5,17 +5,17 @@ import com.batuaa.transactionservice.dto.TransactionTypeDto;
 import com.batuaa.transactionservice.exception.EmptyTransactionListException;
 import com.batuaa.transactionservice.exception.GlobalExceptionHandler;
 import com.batuaa.transactionservice.exception.WalletNotFoundException;
-import com.batuaa.transactionservice.model.Status;
-import com.batuaa.transactionservice.model.Transaction;
-import com.batuaa.transactionservice.model.Type;
-import com.batuaa.transactionservice.model.Wallet;
+import com.batuaa.transactionservice.model.*;
 import com.batuaa.transactionservice.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,28 +23,34 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @Slf4j
 public class TransactionControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
     @Mock
     private TransactionService transactionService;
+
 
     @InjectMocks
     private TransactionController transactionController;
 
     private List<Transaction> transactions;
     private TransactionTypeDto transactionTypeDto;
+
+    private List<Transaction> mockTransactions;
 
     @BeforeEach
     void setUp() {
@@ -95,6 +101,18 @@ public class TransactionControllerTest {
         transactionTypeDto.setWalletId("WAL0DC01EF4");
         transactionTypeDto.setEmailId("bhoolinagar@gmail.com");
         transactionTypeDto.setType(Type.RECEIVED);
+
+
+        mockTransactions = Arrays.asList(
+                new Transaction(1, null, null, null, null,
+                        new BigDecimal("200.00"), LocalDateTime.now(),
+                        Status.SUCCESS, "OK", Type.RECEIVED),
+                new Transaction(2, null, null, null, null,
+                        new BigDecimal("500.00"), LocalDateTime.now(),
+                        Status.SUCCESS, "OK", Type.RECEIVED)
+        );
+
+
     }
 
     //  SUCCESS TEST WITH REAL DATA
@@ -301,4 +319,27 @@ public class TransactionControllerTest {
 
         verify(transactionService, times(1)).viewTransactionsByType(any());
     }
+
+
+    @Test
+    void testViewTransactionsByAmount_Success() throws Exception {
+        when(transactionService.sortTransactionsByAmount(anyString(), anyString(), anyString()))
+                .thenReturn(mockTransactions);
+
+        mockMvc.perform(get("/transaction/api/v2/view-transactions-by-amount")
+                        .param("walletId", "WAL123")
+                        .param("emailId", "user@example.com")
+                        .param("sortOrder", "DESC")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].amount").value(200.00))
+                .andExpect(jsonPath("$[1].amount").value(500.00));
+
+        verify(transactionService, times(1))
+                .sortTransactionsByAmount(anyString(), anyString(), anyString());
+    }
+
+
+
+
 }

@@ -60,7 +60,7 @@ public class Transaction {
 
 
     @Enumerated(EnumType.STRING)
-private Type type;
+    private Type type;
     public Integer getTransactionId() {
         return transactionId;
     }
