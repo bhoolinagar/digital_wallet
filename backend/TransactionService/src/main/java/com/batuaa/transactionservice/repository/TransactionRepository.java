@@ -51,8 +51,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             select t from Transaction t
             where t.fromWallet.walletId = :walletId and t.toWallet.walletId = :walletId1 and t.type = :type""")
     List<Transaction> findByWalletIdAndType(@Param("walletId") String walletId, @Param("walletId1") String walletId1, @Param("type") Type type);
+//
+//   @Query("SELECT t from Transaction t where (t.fromWallet.walletId = :walletId OR t.toWallet.walletId = :walletId)" +
+//            "AND (t.fromBuyer.emailId = :emailId OR t.toBuyer.emailId = :emailId)" +
+//            "ORDER BY t.amount DESC")
 
-   @Query("SELECT t from Transaction t where (t.fromWallet.walletId = :walletId OR t.toWallet.walletId = :walletId)" +
+    @Query("SELECT t from Transaction t where (t.fromWallet.walletId = :walletId OR t.toWallet.walletId = :walletId)" +
             "AND (t.fromBuyer.emailId = :emailId OR t.toBuyer.emailId = :emailId)" +
             "ORDER BY t.amount")
     List<Transaction> findTransactionAmountByWalletAndEmail(@Param("walletId") String walletId ,@Param("emailId") String emailId);

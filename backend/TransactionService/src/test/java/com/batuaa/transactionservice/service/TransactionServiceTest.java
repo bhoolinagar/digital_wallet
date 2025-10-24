@@ -4,10 +4,7 @@ import com.batuaa.transactionservice.dto.TransactionDateRangeDto;
 import com.batuaa.transactionservice.dto.TransactionTypeDto;
 import com.batuaa.transactionservice.exception.EmptyTransactionListException;
 import com.batuaa.transactionservice.exception.WalletNotFoundException;
-import com.batuaa.transactionservice.model.Buyer;
-import com.batuaa.transactionservice.model.Transaction;
-import com.batuaa.transactionservice.model.Type;
-import com.batuaa.transactionservice.model.Wallet;
+import com.batuaa.transactionservice.model.*;
 import com.batuaa.transactionservice.repository.TransactionRepository;
 import com.batuaa.transactionservice.repository.WalletRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,6 +46,8 @@ class TransactionServiceTest {
     private Transaction tx2;
     private List<Transaction> transactions;
     private Transaction tx3;
+    private Buyer buyer;
+    private List<Transaction> transactionslist;
 
     @BeforeEach
     void setUp() {
@@ -148,6 +148,24 @@ class TransactionServiceTest {
         );
         // List of transactions
         transactions = List.of(tx1, tx2);
+
+
+        Wallet wallet = new Wallet(); // you can use no-arg constructor
+        wallet.setWalletId("wallet1");
+
+        buyer = new Buyer();
+        buyer.setEmailId("email@example.com");
+
+        transactionslist = Arrays.asList(
+                new Transaction(1, wallet, null, buyer, null, new BigDecimal("200.00"),
+                        LocalDateTime.now(), Status.SUCCESS, "OK", Type.RECEIVED),
+                new Transaction(2, wallet, null, buyer, null, new BigDecimal("500.00"),
+                        LocalDateTime.now(), Status.SUCCESS, "OK", Type.RECEIVED),
+                new Transaction(3, wallet, null, buyer, null, new BigDecimal("100.00"),
+                        LocalDateTime.now(), Status.SUCCESS, "OK", Type.RECEIVED)
+        );
+
+
     }
 
     // ===================== Date Range Tests =====================
@@ -305,6 +323,48 @@ class TransactionServiceTest {
         verify(transactionRepository, times(1))
                 .findByFromWalletIdAndType(withdrawalDto.getWalletId(), Type.WITHDRAWN);
     }
+
+   // Transaction amount
+
+    @Test
+    void testSortTransactionsByAmountAscending() {
+        when(transactionRepository.findTransactionAmountByWalletAndEmail("wallet1", "email@example.com"))
+                .thenReturn(transactionslist);
+
+        List<Transaction> sorted = transactionService.sortTransactionsByAmount("wallet1", "email@example.com", "ASC");
+
+        assertEquals(3, sorted.size());
+        assertEquals(new BigDecimal("100.00"), sorted.get(0).getAmount());
+        assertEquals(new BigDecimal("200.00"), sorted.get(1).getAmount());
+        assertEquals(new BigDecimal("500.00"), sorted.get(2).getAmount());
+    }
+
+    @Test
+    void testSortTransactionsByAmountDescending() {
+        when(transactionRepository.findTransactionAmountByWalletAndEmail("wallet1", "email@example.com"))
+                .thenReturn(transactionslist);
+
+        List<Transaction> sorted = transactionService.sortTransactionsByAmount("wallet1", "email@example.com", "DESC");
+
+        assertEquals(3, sorted.size());
+        assertEquals(new BigDecimal("500.00"), sorted.get(0).getAmount());
+        assertEquals(new BigDecimal("200.00"), sorted.get(1).getAmount());
+        assertEquals(new BigDecimal("100.00"), sorted.get(2).getAmount());
+    }
+
+    @Test
+    void testSortTransactionsByAmountInvalidSortOrderDefaultsToAscending() {
+        when(transactionRepository.findTransactionAmountByWalletAndEmail("wallet1", "email@example.com"))
+                .thenReturn(transactionslist);
+
+        List<Transaction> sorted = transactionService.sortTransactionsByAmount("wallet1", "email@example.com", "INVALID");
+
+        // Should behave as ascending
+        assertEquals(new BigDecimal("100.00"), sorted.get(0).getAmount());
+    }
+
+
+
 
 
 }
