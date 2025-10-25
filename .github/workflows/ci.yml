@@ -1,0 +1,83 @@
+name: My-Batuaa-Capstone-Project
+
+on:
+# as the CI should run for both direct commits and PRs
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  backend: # job id 
+    name: Build & Test Backend Microservices # name for the job 
+    runs-on: ubuntu-latest #runner for the job | is a Ubuntu virtual machine provided by GitHub in this case
+
+    services:
+      mysql: # here it starts a Docker container alongside the runner.which is MySQL 8.0.
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: BatuaaDB
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code   # this checks out your gitHub repo into the container
+        uses: actions/checkout@v3 # without this the runner will not be able to access the code.
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3  # this will install Java JDK 17 on the runner using the Temurin distribution
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3   # this will caches the project's Maven dependencies (~/.m2/repository) to speed up future builds.
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }} # The key use the hash of all pom.xml files. If pom.xml changes, cache is refreshed.
+          restore-keys: |
+            ${{ runner.os }}-maven-
+            
+      # move to Transaction Service, deletes previous builds.verify -> compiles, runs unit tests, and checks the build. -B -> runs in batch mode
+      - name: Build & Test TransactionService
+        run: mvn clean verify -B
+        working-directory: backend/TransactionService
+          
+      # Moves into the UserProfile microservice folder. Builds and tests it in the same way as TransactionService.
+      - name: Build & Test UserProfile
+        run: mvn clean verify -B
+        working-directory: backend/UserProfile
+
+  frontend:
+    name: Build & Test React Frontend
+    runs-on: ubuntu-latest
+    needs: backend
+    defaults:
+      run:
+        working-directory: frontend/my-batuaa
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Run frontend tests
+        run: npm test -- --watchAll=false --passWithNoTests # remove the passwithNoTest once fron end tests are added
+
+      - name: Build frontend
+        run: npm run build
