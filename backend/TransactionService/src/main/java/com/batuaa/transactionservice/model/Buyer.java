@@ -1,10 +1,9 @@
 package com.batuaa.transactionservice.model;
-import com.batuaa.TransactionService.model.Wallet;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public class Buyer {
 
     @Id
     @Email
-    @Column(nullable = false, unique = true)
+    @Column(name = "email_id", nullable = false, unique = true)
     private String emailId;
 
     @NotBlank

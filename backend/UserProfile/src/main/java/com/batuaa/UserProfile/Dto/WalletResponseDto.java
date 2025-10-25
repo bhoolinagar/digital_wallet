@@ -11,8 +11,10 @@ public class WalletResponseDto {
     private BigDecimal balance;
     private String bankName;
     private String buyerEmail;
-    private  String buyerName;
-    public WalletResponseDto() {}
+    private String buyerName;
+
+    public WalletResponseDto() {
+    }
 
     public WalletResponseDto(Wallet wallet) {
         this.walletId = wallet.getWalletId();
@@ -20,7 +22,7 @@ public class WalletResponseDto {
         this.balance = wallet.getBalance();
         this.bankName = wallet.getBankName();
         this.buyerEmail = wallet.getBuyer().getEmailId();
-        this.buyerName=wallet.getBuyer().getName();
+        this.buyerName = wallet.getBuyer().getName();
     }
 
     // getters & setters
