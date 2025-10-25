@@ -1,9 +1,16 @@
-import React from "react";
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import React, { startTransition, useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Grid,
+  CircularProgress,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardActions from '@mui/material/CardActions';
 import { Box, IconButton } from '@mui/material';
@@ -15,97 +22,108 @@ import transferLogo from '../images/transfer_logo.png'
 import shoppinyLogo from '../images/shopying.png'
 import "./WalletList.css";
 import AddWallet from './AddWallet.jsx';
-import { use, useEffect, useState } from 'react';
-import axios from 'axios';
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { esES } from "@mui/material/locale";
 import { useNavigate } from "react-router-dom";
+import { ClipboardListIcon, ClipboardWithIcon } from "flowbite-react";
+import Navbar from "../Navbar.jsx";
 
-export default function WalletList() {
-
-  const [wallets, setWallets]=useState([])
-  const buyer_email="priyanka@gmail.com"
+const WalletDashboard = () => {
+  const buyerEmail = "priyanka@gmail.com"; // replace with dynamic user email if needed
+  const [wallets, setWallets] = useState([]);
+  const [primaryWallet, setPrimaryWallet] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState({ open: false, message: "", severity: "success" });
 
   const navigate = useNavigate();
-
-const goToWallet = (walletId) => {
-  navigate(`/addmoney/${walletId}`);
-};
-
-
-  const [start, setStart] = useState(0);
-  // show 7 cards initiall
-
-const limit=5; // only show 5 card per view 
- 
-// Move to previous 5 cards
-  const handlePrev = () => {
-    if (start > 0) {
-      setStart((prev) => prev - limit);
-     }
+  
+  const goToWallet = (walletId) => {
+    navigate(`/addmoney/${walletId}`);
   };
-  // Move to next 5 cards
-  const handleNext = () => {
-    if (start+limit< wallets.length) {
-      setStart((prev) => prev + limit);
-    
+  
+  // Fetch all wallets
+  const fetchWallets = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`http://localhost:8031/wallet/api/v1/wallet-list/${buyerEmail}`);
+      setWallets(res.data.data || []);
+    } catch (err) {
+      console.error("Failed to fetch wallets:", err);
+      setWallets([]);
+      setAlert({ open: true, message: "Failed to fetch wallets", severity: "error" });
+    } finally {
+      setLoading(false);
     }
   };
-  useEffect(()=>{
-   axios.get("http://localhost:8031/wallet/api/v1/wallet-list/"+buyer_email)
-   .then((res)=>{
-    setWallets(res.data.data || [])
-  console.log(" rest data: ")
-  console.log(res.data)
-}) .catch((err) => {
-    console.error("Failed to fetch wallets:", err);
-    setWallets([]); // fallback to empty array
-  });
 
-},[])
+  // Fetch primary wallet
+  const fetchPrimaryWallet = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8031/wallet/api/v1/primary`, {
+        params: { email: buyerEmail },
+      });
+      setPrimaryWallet(res.data.data);
+    } catch (err) {
+      console.error("Primary wallet not found", err);
+      setPrimaryWallet(null);
+    }
+  };
 
- const containerRef = React.useRef(null);
-  // Get the current visible wallets
-const visibleWallets = wallets.slice(start, start + limit);
-  
-return (
-    <Box className="wallet-list-container"> 
-   <Box className='box'>
-    
-     {/* Left Button */}
-      <Button
-        onClick= {handlePrev}
-        disabled={start==0}
+  // Set a wallet as primary
+  const setPrimaryWalletHandler = async (walletId) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:8031/wallet/api/v1/set-primary`,
+        null,
+        { params: { walletId, email: buyerEmail } }
+      );
+      setAlert({ open: true, message: res.data.message, severity: "success" });
+      // Refresh both wallet list and primary wallet
+      fetchWallets();
+      fetchPrimaryWallet();
+    } catch (err) {
+      console.error("Error setting primary wallet:", err);
+      setAlert({ open: true, message: "Failed to set primary wallet", severity: "error" });
+    }
+  };
+
+  useEffect(() => {
+    fetchWallets();
+    fetchPrimaryWallet();
+  }, []);
+
+  if (loading) return <CircularProgress />;
+
+  return (
+    <Box padding={10}>
+      <Navbar></Navbar>
+    <div className="p-6">
+      <Typography variant="h4" gutterBottom>
+        Buyer Profile
+      </Typography>
+     
+     <Box sx={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start", // aligns text to the left
+    justifyContent: "flex-start",
+    textAlign: "left", // ensures Typography text aligns left
+    width: "fit-content", // optional: prevents box from taking full width
+    ml: 2, // optional: small left margin for spacing
+  }}>
+      <Typography variant="h6" gutterBottom>
+        Name: Bhooli Nagar
+      </Typography>
+      <Typography variant="h6" gutterBottom sx={{alignContent:'start'}}>
+        Primary wallet details
+      </Typography>
+     </Box>
+      {/* Current Primary Wallet */}
+      {primaryWallet ? (
+         <Card
         sx={{
-          position: "absolute",
-          left: 0,
-          top: "40%",
-          zIndex: 1,
-          backgroundColor: "white",
-          borderRadius: "50%",
-          minWidth: "40px",
-          boxShadow: 2,
-        }}
-      >
-        <ArrowBackIosIcon />
-      </Button>
-
-{/*  Scorllable card container */}
-<Box ref={containerRef}  sx={{
-          display: "flex",
-          overflowX: "hidden",
-          scrollBehavior: "smooth",
-          px:6,
-          gap: 5,
-         scrollBehavior:'smooth',
-         justifyContent:'center'
-        }}>
-  {visibleWallets.length > 0 ? (
-    visibleWallets.map((wallet,index) => (
-      <Card
-        key= { wallet.walletid||index}
-        sx={{
+          alignContent:'center',
           maxWidth: 345,
           color: "#0F3A6E",
           borderRadius: 4,
@@ -126,7 +144,109 @@ return (
               Wallet
             </Typography>
             <Typography variant="body2" align="left" sx={{ color: "white" }}>
-              Name: {wallet.buyerName}
+              Email : {buyerEmail}
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                flexDirection: "row",
+              }}
+            >
+              <Typography
+                variant="body2"
+                align="left"
+                sx={{ color: "white" }}
+              >
+                Wallet Id: {primaryWallet.walletId}
+              </Typography>
+               <ClipboardWithIcon valueToCopy={primaryWallet.walletId} />
+            {/*    <IconButton
+                aria-label="copy"
+                sx={{ color: "#439b8bff", backgroundColor: "white" }}
+              >
+        
+        <img
+                  src={copyLogo}
+                  alt="Copy"
+                  style={{ width: 20, height: 20 }}
+                />
+             
+              </IconButton> */}
+            </Box>
+            <Typography
+                variant="body2"
+                align="left"
+                sx={{ color: "white" }}
+              >
+                Account Number: {primaryWallet.accountNumber}
+              </Typography>
+           <Typography
+                variant="body2"
+                align="left"
+                sx={{ color: "white" }}
+              >
+                Bank Name: {primaryWallet.bankName}
+              </Typography>
+            <Typography variant="body2" align="left" sx={{ color: "white" }}>
+              Balance: {primaryWallet.balance} INR
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        <CardActions className="wallet-card-actions">
+          <Button
+            size="medium"
+            color="primary"
+            className="add-wallet-btn"
+           onClick={() => {
+             goToWallet(primaryWallet.walletId)
+            }}
+          >
+            Add Money
+          </Button>
+        </CardActions>
+      </Card>
+      ) : (
+        <Typography variant="subtitle1" sx={{ mb: 4 }}>
+          No primary wallet selected
+        </Typography>
+      )}
+
+<Typography gutterBottom
+              variant="h3"
+              align="center"
+              component="div"
+              fontSize={29}
+              fontFamily={600}
+              padding={4}
+ sx={{ color: "black" }}>
+          All wallets details 
+            </Typography>
+      {/* Wallet List */}
+      <Grid container spacing={3}>
+        {wallets.map((wallet) => (
+          <Grid item xs={12} sm={6} md={4} key={wallet.walletId}>
+             <Card
+        sx={{
+          maxWidth: 345,
+          color: "#0F3A6E",
+          borderRadius: 4,
+          boxShadow: 3,
+          borderColor: "#9828a2ff",
+          borderBlockColor: "#ba357cff",
+        }}
+      >
+        <CardActionArea sx={{ backgroundColor: "#0F3A6E" }}>
+          <CardContent>
+            <Typography
+              gutterBottom
+              variant="h5"
+              align="right"
+              component="div"
+              sx={{ color: "white" }}
+            >
+              Wallet
             </Typography>
             <Box
               sx={{
@@ -143,17 +263,34 @@ return (
               >
                 Wallet Id: {wallet.walletId}
               </Typography>
-              <IconButton
+             
+            {/*    <IconButton
                 aria-label="copy"
                 sx={{ color: "#439b8bff", backgroundColor: "white" }}
               >
-                <img
+        
+        <img
                   src={copyLogo}
                   alt="Copy"
                   style={{ width: 20, height: 20 }}
                 />
-              </IconButton>
+             
+              </IconButton> */}
             </Box>
+            <Typography
+                variant="body2"
+                align="left"
+                sx={{ color: "white" }}
+              >
+                Account Number: {wallet.accountNumber}
+              </Typography>
+           <Typography
+                variant="body2"
+                align="left"
+                sx={{ color: "white" }}
+              >
+                Bank Name: {wallet.bankName}
+              </Typography>
             <Typography variant="body2" align="left" sx={{ color: "white" }}>
               Balance: {wallet.balance} INR
             </Typography>
@@ -164,83 +301,33 @@ return (
             size="medium"
             color="primary"
             className="add-wallet-btn"
-            onClick={() => {
-             goToWallet(wallet.walletId)
-            }}
+                onClick={() => setPrimaryWalletHandler(wallet.walletId)}
           >
-            Add Money
+            Set as Primary
           </Button>
         </CardActions>
       </Card>
-    ))
-  ) : (
-    <p>No Wallets found</p>
-  )}</Box>
+          </Grid>
+        ))}
+      </Grid>
 
-   {/* Right Button */}
-      <Button
-        onClick={handleNext}
-        disabled={(start+limit)>=wallets.length}
-        sx={{
-          position: "absolute",
-          right: 0,
-          top: "40%",
-          zIndex: 1,
-          backgroundColor: "white",
-          borderRadius: "50%",
-          minWidth: "40px",
-          boxShadow: 2,
-        }}
+      {/* Snackbar for alerts */}
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={3000}
+        onClose={() => setAlert({ ...alert, open: false })}
       >
-        <ArrowForwardIosIcon />
-      </Button>
-</Box>
-
-
-   <Card className="wallet-card" sx={{borderRadius:4 ,width:270}}>
-      <CardActionArea>
-        <img src={walletLogo} alt="Wallet" className="wallet-image" />
-      </CardActionArea>
-
-      <CardActions className="wallet-card-actions">
-        <Button size="medium" color="primary" className="add-wallet-btn"
-          onClick={() => {
-            window.location.href = '/add-wallet';
-            // Navigate to AddWallet component
-          }}  
+        <Alert
+          onClose={() => setAlert({ ...alert, open: false })}
+          severity={alert.severity}
+          sx={{ width: "100%" ,backgroundColor:"#009227ff", color:"#ffff"}}
         >
-          Add new Wallet
-        </Button>
-      </CardActions>
-    </Card>  
-
-     <Card className="wallet-card" sx={{borderRadius:4 ,width:270}}>
-      <CardActionArea>
-        <img src={transferLogo} alt="Wallet" className="wallet-image" />
-      </CardActionArea>
-
-      <CardActions className="wallet-card-actions">
-        <Button size="medium" color="primary" className="add-wallet-btn">
-          Transfer Money
-        </Button>
-      </CardActions>
-    </Card>  
-    
-     <Card className="wallet-card" sx={{borderRadius:4 ,width:270}}>
-      <CardActionArea>
-        <img src={shoppinyLogo} alt="Wallet" className="wallet-image" />
-      </CardActionArea>
-
-      <CardActions className="wallet-card-actions">
-        <Button size="medium" color="primary" className="add-wallet-btn" 
-        
-        >
-            Shopping
-        </Button>
-      </CardActions>
-    </Card>  
-    
-  </Box>
+          {alert.message}
+        </Alert>
+      </Snackbar>
+    </div>
+    </Box>
   );
+};
 
-}
+export default WalletDashboard;

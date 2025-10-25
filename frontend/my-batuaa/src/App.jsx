@@ -14,12 +14,10 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} /> */}
   return (
-    <BrowserRouter>
-    
-    <Routes>
-      
+    <BrowserRouter> 
+    <Routes>  
       <Route path='/' element={<Dashboard></Dashboard>}/>
-      <Route  path='/walletlist' element={<WalletList></WalletList>}></Route>
+      <Route  path='/walletlist' element={<WalletList/>}></Route>
       <Route  path='/addmoney/:walletId' element={<AddMoney/>}/>
       <Route path='/addwallet' element={<AddWallet/>}></Route>
       </Routes>

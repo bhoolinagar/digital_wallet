@@ -23,4 +23,8 @@ public interface WalletService {
     // to get all walletList
     List<Wallet> getWalletListByBuyer(String email);
 
+    public void setPrimaryWallet(String walletId, String email);
+    public Wallet getPrimaryWallet(String email);
+
+
 }

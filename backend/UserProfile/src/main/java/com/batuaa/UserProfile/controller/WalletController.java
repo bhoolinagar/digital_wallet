@@ -16,6 +16,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@CrossOrigin
 @RequestMapping("wallet/api/v1")
 public class WalletController {
     @Autowired
@@ -68,6 +69,17 @@ public class WalletController {
         return ResponseEntity.ok(
                 new ApiResponse("success", "Wallet list details fetched successfully", responseList)
         );
+    }
+
+    @PutMapping("/set-primary")
+    public ResponseEntity<ApiResponse> setPrimaryWallet(@RequestParam String walletId, @RequestParam String email) {
+       walletService.setPrimaryWallet(walletId, email);
+        return ResponseEntity.ok( new ApiResponse("success", "Primary wallet updated successfully"));
+    }
+    @GetMapping("/primary")
+    public ResponseEntity<ApiResponse> getPrimaryWallet(@RequestParam String email) {
+        Wallet wallet = walletService.getPrimaryWallet(email);
+        return ResponseEntity.ok( new ApiResponse("success"," primary wallet fetched successfully",wallet));
     }
 
 }

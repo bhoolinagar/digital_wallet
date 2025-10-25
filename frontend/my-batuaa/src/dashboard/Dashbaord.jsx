@@ -14,43 +14,16 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import WalletList from './WalletList';
 import Navbar from '../Navbar';
+import PrimaryWallet from './Primary';
 
 export default function Dashboard() {
 
-const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
-
-  const pages = [
-  { name: "Home", path: "/" },
-  { name: "Wallets", path: "/wallets" },
-  { name: "Transactions", path: "/transactions" },
-];
-
-const settings = [
-  { name: "Profile", action: "/profile" },
-  { name: "Logout", action: "/logout" },
-];
   return (
     <div>
      <Navbar></Navbar>
      <Box height={20}/>
-<WalletList/>
+     <PrimaryWallet></PrimaryWallet>
+{/*<WalletList/> */}
 
     </div>
   );
