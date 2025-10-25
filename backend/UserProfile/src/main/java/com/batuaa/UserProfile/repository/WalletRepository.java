@@ -22,4 +22,10 @@ public interface WalletRepository extends JpaRepository<Wallet, String> {
     boolean existsByBuyerEmailIdAndAccountNumber(String emailId, String accountNumber);
 
     List<Wallet> findAllByBuyer(Buyer buyer);
+
+    List<Wallet> findByBuyerEmailId(String email);
+
+    Optional<Wallet> findByBuyerEmailIdAndIsPrimaryTrue(String email);
+
+
 }

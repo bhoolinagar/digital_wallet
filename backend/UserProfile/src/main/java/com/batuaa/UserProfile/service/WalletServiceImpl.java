@@ -1,6 +1,7 @@
 package com.batuaa.userprofile.service;
 import com.batuaa.userprofile.dto.WalletDto;
 import com.batuaa.userprofile.exception.BuyerNotFoundException;
+import com.batuaa.userprofile.exception.PrimaryWalletNotfound;
 import com.batuaa.userprofile.exception.WalletAlreadyFound;
 import com.batuaa.userprofile.exception.WalletNotFoundException;
 import com.batuaa.userprofile.model.Buyer;
@@ -187,4 +188,28 @@ public class WalletServiceImpl implements WalletService {
         return wallets;
     }
 
+
+    @Override
+    public void setPrimaryWallet(String walletId, String email) {
+        // 1.Find all wallets by email
+        List<Wallet> wallets = walletRepository.findByBuyerEmailId(email);
+
+        // 2. Unset all previous primary wallets
+        for (Wallet w : wallets) {
+            w.setPrimary(false);
+        }
+
+        // 3  Set the selected one as primary
+        Wallet selectedWallet = walletRepository.findById(walletId)
+                .orElseThrow(() -> new WalletNotFoundException("Wallet not found"));
+        selectedWallet.setPrimary(true);
+
+        // 4 Save changes
+        walletRepository.saveAll(wallets);
+    }
+    @Override
+    public Wallet getPrimaryWallet(String email)  {
+        return walletRepository.findByBuyerEmailIdAndIsPrimaryTrue(email)
+                .orElseThrow(() ->  new PrimaryWalletNotfound("Primary wallet not set"));
+    }
 }

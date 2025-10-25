@@ -47,4 +47,12 @@ public class GlobalExceptionHandler {
         ApiResponse response = new ApiResponse("fail", ex.getMessage());
         return ResponseEntity.status(400).body(response);
     }
+
+    @ExceptionHandler(PrimaryWalletNotfound.class)
+    public ResponseEntity<ApiResponse> handlePrimaryWalletNotFound(PrimaryWalletNotfound ex) {
+        ApiResponse response = new ApiResponse("fail", ex.getMessage());
+        return ResponseEntity.status(404).body(response);
+    }
+
+
 }

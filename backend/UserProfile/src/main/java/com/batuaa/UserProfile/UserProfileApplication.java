@@ -13,7 +13,7 @@ public class UserProfileApplication {
         SpringApplication.run(UserProfileApplication.class, args);
     }
 
-
+/*
     @Bean
     public FilterRegistrationBean getFilter()
     {
@@ -23,4 +23,6 @@ public class UserProfileApplication {
         return filterbean;
 
     }
+
+ */
 }
