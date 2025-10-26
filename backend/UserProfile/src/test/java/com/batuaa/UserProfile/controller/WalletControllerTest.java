@@ -176,15 +176,12 @@ public class WalletControllerTest {
     // --- Get Wallet Details ---
     @Test
     void getWalletDetails_success() throws Exception {
-        String email = "bhooli@gmail.com";
         String walletId = "WALB7A0E0285";
 
-        when(walletService.getWalletDetails(email, walletId))
+        when(walletService.getWalletDetails(walletId))
                 .thenReturn(wallet);
 
-        mockMvc.perform(get("/wallet/api/v1/details")
-                        .param("email", email)
-                        .param("walletId", walletId)
+        mockMvc.perform(get("/wallet/api/v1/details/{walletId}", walletId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("success"))
@@ -192,18 +189,14 @@ public class WalletControllerTest {
                 .andExpect(jsonPath("$.data.walletId").value(walletId))
                 .andExpect(jsonPath("$.data.balance").value(1000));
     }
-
     @Test
     void getWalletDetails_walletNotFound() throws Exception {
-        String email = "bhooli@gmail.com";
         String walletId = "INVALID_WALLET";
 
-        when(walletService.getWalletDetails(email, walletId))
+        when(walletService.getWalletDetails(walletId))
                 .thenThrow(new WalletNotFoundException("Wallet not found with ID: " + walletId));
 
-        mockMvc.perform(get("/wallet/api/v1/details")
-                        .param("email", email)
-                        .param("walletId", walletId))
+        mockMvc.perform(get("/wallet/api/v1/details/{walletId}", walletId))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("fail"))
                 .andExpect(jsonPath("$.message").value("Wallet not found with ID: " + walletId));

@@ -12,8 +12,8 @@ public interface WalletService {
     // Generates a unique 11-character wallet ID using email and account number
     public String generateWalletId(String email, String accountNumber);
 
-    // to get balance from wallet
-    Wallet getWalletDetails(String emailId, String walletId);
+    // to get wallet
+    Wallet getWalletDetails(String walletId);
 
     // linkBankAccountToWallet( WalletDto wallet)
     public String linkBankAccountToWallet(WalletDto wallet);
