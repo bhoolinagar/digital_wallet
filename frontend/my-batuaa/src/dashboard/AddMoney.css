@@ -1,0 +1,71 @@
+.add-money-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f3f5f9;
+  padding: 40px;
+  border-radius: 40px;
+  width: 450px;
+  margin: 0 auto;
+}
+/* Heading */
+.form-title {
+  font-size: 38px;
+  font-weight: bold;
+  font-family: "Roboto Mono, monospace";
+  color: #0f3a6e;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
+  height: 80px;
+}
+
+/* Input wrapper */
+.input-container {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Input field (MUI TextField override) */
+.MuiOutlinedInput-root {
+  border-radius: 40px !important;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: #0f3a6e !important;
+}
+
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #0d2e59 !important;
+}
+
+/* Label text */
+.MuiInputLabel-root {
+  color: gray !important;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Helper text */
+.MuiFormHelperText-root {
+  color: gray;
+  font-size: 12px;
+}
+
+/* Submit button */
+
+
+
+.submit-button:hover {
+  background-color: #0d2e59;
+}
+.submit-button {
+  margin-top: 10px;
+  padding: 12px 32px;
+  width: 60%;
+  height: 50px;
+  border-radius: 100px;
+  background-color: #b2c933;
+  font-size: 18px;
+  text-transform: none;
+}

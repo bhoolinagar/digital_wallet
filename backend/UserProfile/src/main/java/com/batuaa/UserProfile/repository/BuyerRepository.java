@@ -1,22 +1,17 @@
-package com.batuaa.UserProfile.repository;
+package com.batuaa.userprofile.repository;
 
-import com.batuaa.UserProfile.model.Buyer;
-
-import jakarta.validation.constraints.Email;
+import com.batuaa.userprofile.model.Buyer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface BuyerRepository extends JpaRepository<Buyer, String> {
-    // For login and registration checks
+public interface BuyerRepository extends JpaRepository<Buyer, Integer> {
+
+    // Check if email is already registered (ignore case)
+    boolean existsByEmailIdIgnoreCase(String emailId);
+
+    // Find buyer by email (for login validation)
     Optional<Buyer> findByEmailId(String emailId);
-
-    // For login and registration checks
-    boolean existsByEmailIdIgnoreCase(String normalizedEmail);
-
-    Object existsByEmailId(@Email String emailId);
-
-
 }
