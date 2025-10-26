@@ -14,15 +14,31 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import WalletList from './WalletList';
 import Navbar from '../Navbar';
+import { useNavigate } from 'react-router-dom';
 import PrimaryWallet from './Primary';
 
 export default function Dashboard() {
+
+  const navigate = useNavigate();
+
+  const goToAdminDashboard = () => {
+    navigate('/adminDashboard'); // redirects to AdminDashboard route
+  };
 
   return (
     <div>
      <Navbar></Navbar>
      <Box height={20}/>
      <PrimaryWallet></PrimaryWallet>
+
+
+      <div>
+      <h1>Dashboard</h1>
+      <button onClick={goToAdminDashboard}>
+        Go to Admin Dashboard
+      </button>
+    </div>
+
 {/*<WalletList/> */}
 
     </div>
