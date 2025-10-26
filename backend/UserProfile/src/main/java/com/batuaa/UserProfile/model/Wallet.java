@@ -24,8 +24,7 @@ public class Wallet {
     private String bankName;
     @NotNull
     private String accountNumber;
-    private Boolean isPrimary;
-
+    private Boolean isPrimary=false;
 
     public Boolean getPrimary() {
         return isPrimary;
@@ -34,6 +33,7 @@ public class Wallet {
     public void setPrimary(Boolean primary) {
         isPrimary = primary;
     }
+
 
     public String getWalletId() {
         return walletId;

@@ -15,6 +15,8 @@ import AdbIcon from '@mui/icons-material/Adb';
 import WalletList from './WalletList';
 import Navbar from '../Navbar';
 import PrimaryWallet from './Primary';
+import Footer from './Footer';
+import TransactionHistory from './TransactionHistory';
 
 export default function Dashboard() {
 
@@ -23,8 +25,9 @@ export default function Dashboard() {
      <Navbar></Navbar>
      <Box height={20}/>
      <PrimaryWallet></PrimaryWallet>
+      <Box height={20}/>
+     <TransactionHistory/>
+     <Footer></Footer>
 {/*<WalletList/> */}
-
-    </div>
-  );
-}
+ </div>
+  )}
