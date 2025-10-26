@@ -1,0 +1,16 @@
+.footer-bar {
+  display: flex;                /* Flexbox centers the text */
+  justify-content: center;      /* Center horizontally */
+  align-items: center;          /* Center vertically */
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  background-color: #0F3A6E;
+  width: 100%;
+  height: 40px;
+  position: fixed;              /* Keep footer always visible */
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
+  z-index: 100;                 /* Stay above other content */
+}

@@ -1,20 +1,25 @@
 
 .wallet-list-container {
   display: flex;
-  flex-direction: row;      /*  Horizontal direction */
-  justify-content: center;  /* Center all cards horizontally */
-  align-items: flex-start;  /* Align top edges */
-  flex-wrap: wrap;          /* Allows wrapping on smaller screens */
-  gap: 30px;                /* Spacing between cards */
-  padding: 10px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 40px 40px 20px 20px;        /* More balanced padding */
+  min-height: 30%;          /* Keeps layout consistent in height */
+  background-color: #f9f9f9; /* Optional: soft dashboard background */
+  box-sizing: border-box;
+  border-radius: 2%;
 }
+
 .wallet-card {
   max-width: 350px;
   color: #0f3a6e;
   border-radius: 20%;
  /* border-radius: 40px; /* same as sx={4} */
   box-shadow: 0px 2px 6px rgba(118, 49, 49, 0.2);
-  border: .5px solid #671c1e;
+  border: .5px solid #f3e8e8;
 }
 
 .wallet-image {

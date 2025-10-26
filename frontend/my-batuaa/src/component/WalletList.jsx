@@ -28,6 +28,7 @@ import { esES } from "@mui/material/locale";
 import { useNavigate } from "react-router-dom";
 import { ClipboardListIcon, ClipboardWithIcon } from "flowbite-react";
 import Navbar from "../Navbar.jsx";
+import Footer from "./Footer.jsx";
 
 const WalletDashboard = () => {
   const buyerEmail = "priyanka@gmail.com"; // replace with dynamic user email if needed
@@ -112,10 +113,7 @@ const WalletDashboard = () => {
     width: "fit-content", // optional: prevents box from taking full width
     ml: 2, // optional: small left margin for spacing
   }}>
-      <Typography variant="h6" gutterBottom>
-        Name: Bhooli Nagar
-      </Typography>
-      <Typography variant="h6" gutterBottom sx={{alignContent:'start'}}>
+      <Typography variant="h5" gutterBottom sx={{alignContent:'start'}}>
         Primary wallet details
       </Typography>
      </Box>
@@ -190,7 +188,7 @@ const WalletDashboard = () => {
                 Bank Name: {primaryWallet.bankName}
               </Typography>
             <Typography variant="body2" align="left" sx={{ color: "white" }}>
-              Balance: {primaryWallet.balance} INR
+              Balance: ₹ {primaryWallet.balance} 
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -292,7 +290,7 @@ const WalletDashboard = () => {
                 Bank Name: {wallet.bankName}
               </Typography>
             <Typography variant="body2" align="left" sx={{ color: "white" }}>
-              Balance: {wallet.balance} INR
+              Balance: ₹ {wallet.balance}
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -310,7 +308,7 @@ const WalletDashboard = () => {
           </Grid>
         ))}
       </Grid>
-
+ 
       {/* Snackbar for alerts */}
       <Snackbar
         open={alert.open}
@@ -325,7 +323,10 @@ const WalletDashboard = () => {
           {alert.message}
         </Alert>
       </Snackbar>
+
+     
     </div>
+    <Footer></Footer>
     </Box>
   );
 };

@@ -51,6 +51,8 @@ public class TransactionServiceTest {
     private Transaction tx2;
     private List<Transaction> transactions;
     private Transaction tx3;
+    private Buyer buyer;
+    private List<Transaction> transactionslist;
 
     private Wallet walletFrom;
     private Wallet walletTo;
