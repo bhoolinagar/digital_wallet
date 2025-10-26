@@ -1,6 +1,7 @@
 package com.batuaa.userprofile.service;
 
 import com.batuaa.userprofile.dto.WalletDto;
+import com.batuaa.userprofile.service.WalletServiceImpl;
 import com.batuaa.userprofile.exception.BuyerNotFoundException;
 import com.batuaa.userprofile.exception.WalletAlreadyFound;
 import com.batuaa.userprofile.exception.WalletNotFoundException;
@@ -153,34 +154,30 @@ class WalletServiceImplTest {
 
     @Test
     void getWalletDetails_success() {
-        String email = "bhooli123@gmail.com";
         String walletId = "WALB7A0E0285";
 
         Wallet wallet = new Wallet();
         wallet.setWalletId(walletId);
         wallet.setBalance(new BigDecimal("1000"));
-        Buyer buyer = new Buyer();
-        buyer.setEmailId(email);
         wallet.setBuyer(buyer);
 
-        when(walletRepository.findByBuyerEmailIdAndWalletId(email, walletId)).thenReturn(Optional.of(wallet));
+        when(walletRepository.findByWalletId(walletId)).thenReturn(Optional.of(wallet));
 
-        Wallet result = walletService.getWalletDetails(email, walletId);
+        Wallet result = walletService.getWalletDetails(walletId);
 
         assertNotNull(result);
         assertEquals(walletId, result.getWalletId());
         assertEquals(new BigDecimal("1000"), result.getBalance());
+        assertEquals(buyer, result.getBuyer());
     }
-
     @Test
     void getWalletDetails_walletNotFound() {
-        String email = "bhooli123@gmail.com";
         String walletId = "INVALID_WALLET";
 
-        when(walletRepository.findByBuyerEmailIdAndWalletId(email, walletId)).thenReturn(Optional.empty());
+        when(walletRepository.findByWalletId(walletId)).thenReturn(Optional.empty());
 
         WalletNotFoundException exception = assertThrows(WalletNotFoundException.class, () -> {
-            walletService.getWalletDetails(email, walletId);
+            walletService.getWalletDetails(walletId);
         });
 
         assertEquals("Wallet not found with ID: " + walletId, exception.getMessage());

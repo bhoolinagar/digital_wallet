@@ -157,23 +157,12 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public Wallet getWalletDetails(String email, String walletId) {
-        try {
-            return walletRepository.findByBuyerEmailIdAndWalletId(email, walletId)
-                    .orElseThrow(() -> new WalletNotFoundException(
-                            "Wallet not found with ID: " + walletId
-                    ));
-        } catch (WalletNotFoundException ex) {
-            // You can log the error and rethrow or return null depending on your requirement
-            log.error("Error fetching wallet: {}", ex.getMessage());
-            // Option 1: Rethrow as runtime exception
-            throw ex;
-            // Option 2: Return null instead of throwing
-            // return null;
-        } catch (Exception ex) {
-            log.error("Unexpected error fetching wallet: {}", ex.getMessage());
-            throw new RuntimeException("Failed to fetch wallet details", ex);
-        }
+    public Wallet getWalletDetails(String walletId) {
+
+        return walletRepository.findByWalletId(walletId)
+                .orElseThrow(() -> new WalletNotFoundException(
+                        "Wallet not found with ID: " + walletId
+                ));
     }
 
     @Override

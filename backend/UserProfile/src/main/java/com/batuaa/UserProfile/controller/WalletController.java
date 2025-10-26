@@ -16,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("wallet/api/v1")
 public class WalletController {
     @Autowired
@@ -46,15 +46,15 @@ public class WalletController {
     }
 
     //Get Wallet Details
-    @GetMapping("/details")
-    public ResponseEntity<ApiResponse> getWalletDetails(
-            @RequestParam String email,
-            @RequestParam String walletId) {
-
-        Wallet wallet = walletService.getWalletDetails(email, walletId);
+    @GetMapping("/details/{walletId}")
+    public ResponseEntity<ApiResponse> getWalletDetails(@PathVariable String walletId) {
+        Wallet wallet = walletService.getWalletDetails(walletId);
         log.info("Wallet balance: " + wallet.getBalance());
-        return ResponseEntity.ok(new ApiResponse("success", "Wallet details fetched successfully", wallet));
+
+        WalletResponseDto responseDto = new WalletResponseDto(wallet);
+        return ResponseEntity.ok(new ApiResponse("success", "Wallet details fetched successfully", responseDto));
     }
+
 
     @GetMapping("/wallet-list/{email}")
     public ResponseEntity<ApiResponse> getWalletListByBuyer(@PathVariable String email) {
