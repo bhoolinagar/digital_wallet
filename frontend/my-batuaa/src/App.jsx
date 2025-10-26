@@ -6,28 +6,25 @@ import LoginPage from "./pages/LoginPage";
 import './App.css'
 import Dashboard from './dashboard/Dashbaord.jsx'
 import Welcomepage from './landingpage/Welcomepage.jsx'
+import Footer from './Footer/Footer.jsx'
+import Transactionhistory from './History/Transactionhistory.jsx';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <Router>
-      <Welcomepage />
+  <>
+    {/* <Router>
       <Routes>
         <Route path="/" element={<Welcomepage/>} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
-    </Router>
-  
-    // <div>
-    //   {/* <h3>Home page</h3> */}
-    //   {/* <Dashboard /> */}
-    //   <Welcomepage/>
-    //   <LoginPage/>
-    //   <RegisterPage/>
-    // </div>
-  )
+      
+        <Footer/>
+    </Router> */}
+    <Transactionhistory/>
+  </>
+     
+    )
 }
 
 export default App
