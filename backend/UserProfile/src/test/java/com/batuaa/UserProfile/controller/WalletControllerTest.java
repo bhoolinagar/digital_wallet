@@ -78,7 +78,12 @@ public class WalletControllerTest {
         when(walletService.linkBankAccountToWallet(any(WalletDto.class)))
                 .thenReturn("WALB7A0E0285");
 
-        String walletJson = "{ \"emailId\": \"bhooli@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"AC1234\" }";
+        String walletJson = "{"
+                + "\"emailId\": \"bhooli@gmail.com\","
+                + "\"balance\": 1000,"
+                + "\"bankName\": \"HDFC Bank\","
+                + "\"accountNumber\": \"12345678901\""
+                + "}";
 
         mockMvc.perform(post("/wallet/api/v1/link-bank-account")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +98,12 @@ public class WalletControllerTest {
         when(walletService.linkBankAccountToWallet(any(WalletDto.class)))
                 .thenThrow(new WalletAlreadyFound("Bank account already linked with wallet"));
 
-        String walletJson = "{ \"emailId\": \"bhooli@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"AC1234\" }";
+        String walletJson = "{"
+                + "\"emailId\": \"bhooli@gmail.com\","
+                + "\"balance\": 1000,"
+                + "\"bankName\": \"HDFC Bank\","
+                + "\"accountNumber\": \"12345678901\""
+                + "}";
 
         mockMvc.perform(post("/wallet/api/v1/link-bank-account")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -109,8 +119,12 @@ public class WalletControllerTest {
         when(walletService.linkBankAccountToWallet(any(WalletDto.class)))
                 .thenThrow(new BuyerNotFoundException("Buyer not found with email: invalid@gmail.com"));
 
-        String walletJson = "{ \"emailId\": \"invalid@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"AC1234\" }";
-
+        String walletJson = "{"
+                + "\"emailId\": \"invalid@gmail.com\","
+                + "\"balance\": 1000,"
+                + "\"bankName\": \"HDFC Bank\","
+                + "\"accountNumber\": \"12345678901\""
+                + "}";
         // Expect 404 Not Found
         mockMvc.perform(post("/wallet/api/v1/link-bank-account")
                         .contentType(MediaType.APPLICATION_JSON)
