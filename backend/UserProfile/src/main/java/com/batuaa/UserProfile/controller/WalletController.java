@@ -16,17 +16,15 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("wallet/api/v1")
 public class WalletController {
     @Autowired
     private final WalletService walletService;
-
     @Autowired
     public WalletController(WalletService walletService) {
         this.walletService = walletService;
     }
-
     // Link Bank Account
     @PostMapping("/link-bank-account")
     public ResponseEntity<ApiResponse> linkBankAccountToWallet(@Valid @RequestBody WalletDto wallet) {
@@ -34,27 +32,25 @@ public class WalletController {
         return ResponseEntity.status(201)
                 .body(new ApiResponse("success", "Wallet generated successfully", walletId));
     }
-
     // Add Money to Wallet
     @PostMapping("/add-money")
     public ResponseEntity<ApiResponse> addMoneyToWallet(
             @RequestParam String walletId,
             @RequestParam BigDecimal amount) {
-
         String message = walletService.updateMoneyFromBank(walletId, amount);
         return ResponseEntity.ok(new ApiResponse("success", message));
     }
 
     //Get Wallet Details
-    @GetMapping("/details")
-    public ResponseEntity<ApiResponse> getWalletDetails(
-            @RequestParam String email,
-            @RequestParam String walletId) {
-
-        Wallet wallet = walletService.getWalletDetails(email, walletId);
+    @GetMapping("/details/{walletId}")
+    public ResponseEntity<ApiResponse> getWalletDetails(@PathVariable String walletId) {
+        Wallet wallet = walletService.getWalletDetails(walletId);
         log.info("Wallet balance: " + wallet.getBalance());
-        return ResponseEntity.ok(new ApiResponse("success", "Wallet details fetched successfully", wallet));
+
+        WalletResponseDto responseDto = new WalletResponseDto(wallet);
+        return ResponseEntity.ok(new ApiResponse("success", "Wallet details fetched successfully", responseDto));
     }
+
 
     @GetMapping("/wallet-list/{email}")
     public ResponseEntity<ApiResponse> getWalletListByBuyer(@PathVariable String email) {

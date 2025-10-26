@@ -14,6 +14,10 @@ export default defineConfig({
   },
   plugins: [
     react({
+      server: {
+    port: 3000,        // set your default frontend port here
+    open: true,        // automatically open the browser
+  },
       // babel: {
       //   plugins: [['babel-plugin-react-compiler']],
       // },

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,8 +25,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -78,7 +78,12 @@ public class WalletControllerTest {
         when(walletService.linkBankAccountToWallet(any(WalletDto.class)))
                 .thenReturn("WALB7A0E0285");
 
-        String walletJson = "{ \"emailId\": \"bhooli@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"AC1234\" }";
+        String walletJson = "{"
+                + "\"emailId\": \"bhooli@gmail.com\","
+                + "\"balance\": 1000,"
+                + "\"bankName\": \"HDFC Bank\","
+                + "\"accountNumber\": \"12345678901\""
+                + "}";
 
         mockMvc.perform(post("/wallet/api/v1/link-bank-account")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +98,12 @@ public class WalletControllerTest {
         when(walletService.linkBankAccountToWallet(any(WalletDto.class)))
                 .thenThrow(new WalletAlreadyFound("Bank account already linked with wallet"));
 
-        String walletJson = "{ \"emailId\": \"bhooli@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"AC1234\" }";
+        String walletJson = "{"
+                + "\"emailId\": \"bhooli@gmail.com\","
+                + "\"balance\": 1000,"
+                + "\"bankName\": \"HDFC Bank\","
+                + "\"accountNumber\": \"12345678901\""
+                + "}";
 
         mockMvc.perform(post("/wallet/api/v1/link-bank-account")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -109,8 +119,12 @@ public class WalletControllerTest {
         when(walletService.linkBankAccountToWallet(any(WalletDto.class)))
                 .thenThrow(new BuyerNotFoundException("Buyer not found with email: invalid@gmail.com"));
 
-        String walletJson = "{ \"emailId\": \"invalid@gmail.com\", \"balance\": 1000, \"bankName\": \"HDFC Bank\", \"accountNumber\": \"AC1234\" }";
-
+        String walletJson = "{"
+                + "\"emailId\": \"invalid@gmail.com\","
+                + "\"balance\": 1000,"
+                + "\"bankName\": \"HDFC Bank\","
+                + "\"accountNumber\": \"12345678901\""
+                + "}";
         // Expect 404 Not Found
         mockMvc.perform(post("/wallet/api/v1/link-bank-account")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -176,15 +190,12 @@ public class WalletControllerTest {
     // --- Get Wallet Details ---
     @Test
     void getWalletDetails_success() throws Exception {
-        String email = "bhooli@gmail.com";
         String walletId = "WALB7A0E0285";
 
-        when(walletService.getWalletDetails(email, walletId))
+        when(walletService.getWalletDetails(walletId))
                 .thenReturn(wallet);
 
-        mockMvc.perform(get("/wallet/api/v1/details")
-                        .param("email", email)
-                        .param("walletId", walletId)
+        mockMvc.perform(get("/wallet/api/v1/details/{walletId}", walletId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("success"))
@@ -192,18 +203,14 @@ public class WalletControllerTest {
                 .andExpect(jsonPath("$.data.walletId").value(walletId))
                 .andExpect(jsonPath("$.data.balance").value(1000));
     }
-
     @Test
     void getWalletDetails_walletNotFound() throws Exception {
-        String email = "bhooli@gmail.com";
         String walletId = "INVALID_WALLET";
 
-        when(walletService.getWalletDetails(email, walletId))
+        when(walletService.getWalletDetails(walletId))
                 .thenThrow(new WalletNotFoundException("Wallet not found with ID: " + walletId));
 
-        mockMvc.perform(get("/wallet/api/v1/details")
-                        .param("email", email)
-                        .param("walletId", walletId))
+        mockMvc.perform(get("/wallet/api/v1/details/{walletId}", walletId))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("fail"))
                 .andExpect(jsonPath("$.message").value("Wallet not found with ID: " + walletId));
@@ -256,5 +263,35 @@ public class WalletControllerTest {
 
         verify(walletService, times(1)).getWalletListByBuyer("unknown@gmail.com");
     }
+
+    // to set primary wallet based on walletid end email
+    @Test
+    void testSetPrimaryWallet_Success() throws Exception {
+        mockMvc.perform(put("/wallet/api/v1/set-primary")
+                        .param("walletId", "WAL123")
+                        .param("email", "priyanka@gmail.com"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Primary wallet updated successfully"));
+    }
+
+    // Test: getPrimaryWallet success
+    @Test
+    void testGetPrimaryWallet_Success() throws Exception {
+        Wallet wallet = new Wallet();
+        Buyer buyer= new Buyer();
+        buyer.setEmailId("priyanka@gmail.com");
+        wallet.setWalletId("WAL123");
+        wallet.setBuyer(buyer);
+        wallet.setPrimary(true);
+
+        Mockito.when(walletService.getPrimaryWallet(anyString())).thenReturn(wallet);
+
+        mockMvc.perform(get("/wallet/api/v1/primary")
+                        .param("email", "priyanka@gmail.com"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.walletId").value("WAL123"))
+                .andExpect(jsonPath("$.message").value(" primary wallet fetched successfully"));
+    }
+
 
 }
