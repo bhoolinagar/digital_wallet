@@ -25,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 export default function PrimaryWallet() {
 
   const [wallets, setWallets]=useState([])
-  const buyer_email="priyanka@gmail.com"
+  const buyer_email="bhoolinagar@gmail.com"
 
   const navigate = useNavigate();
 
@@ -33,6 +33,14 @@ const goToWallet = (walletId) => {
   navigate(`/addmoney/${walletId}`);
 };
 
+const goToTransferMoney = (walletId) => {
+  navigate("/TransferMoney", {
+    state: {
+      email: "bhoolinagar@gmail.com",
+      primaryWalletId: walletId,
+    },
+  });
+};
 
   const [start, setStart] = useState(0);
   // show 7 cards initiall
@@ -215,18 +223,25 @@ return (
       </CardActions>
     </Card>  
 
+
+    {/* Transfer Money Card */}   
+       
      <Card className="wallet-card" sx={{borderRadius:4 ,width:270}}>
       <CardActionArea>
         <img src={transferLogo} alt="Wallet" className="wallet-image" />
       </CardActionArea>
 
       <CardActions className="wallet-card-actions">
-        <Button size="medium" color="primary" className="add-wallet-btn">
+        <Button size="medium" color="primary" className="add-wallet-btn" 
+        onClick={() => 
+          goToTransferMoney(wallets[0]?.walletId)}
+          >
           Transfer Money
         </Button>
-      </CardActions>
+      </CardActions> 
     </Card>  
-    
+     
+
      <Card className="wallet-card" sx={{borderRadius:4 ,width:270}}>
       <CardActionArea>
         <img src={shoppinyLogo} alt="Wallet" className="wallet-image" />
