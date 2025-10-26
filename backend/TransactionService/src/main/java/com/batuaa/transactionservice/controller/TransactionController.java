@@ -20,8 +20,8 @@ import java.util.List;
 
 @Slf4j
 @RestController
-
 @RequestMapping("/transaction/api/v2")
+@CrossOrigin(origins = "http://localhost:5174")
 public class TransactionController {
 
 
