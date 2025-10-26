@@ -1,30 +1,28 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import HomePage from "./pages/HomePage";
-import RegisterPage from "./pages/RegisterPage";
-import LoginPage from "./pages/LoginPage";
+
 import './App.css'
 import Dashboard from './dashboard/Dashbaord.jsx'
-import Welcomepage from './landingpage/Welcomepage.jsx'
-import Footer from './Footer/Footer.jsx'
-import Transactionhistory from './History/Transactionhistory.jsx';
+import { BrowserRouter, Route,Router,Routes } from 'react-router-dom'
+import WalletList from './dashboard/WalletList.jsx'
+import AddMoney from './dashboard/AddMoney.jsx'
+import AddWallet from './dashboard/AddWallet.jsx'
 
 function App() {
-  return (
-  <>
-    {/* <Router>
-      <Routes>
-        <Route path="/" element={<Welcomepage/>} />
+  const [count, setCount] = useState(0)
+
+   {/*   <Route path="/" element={<Welcomepage/>} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} /> */}
+  return (
+    <BrowserRouter> 
+    <Routes>  
+      <Route path='/' element={<Dashboard></Dashboard>}/>
+      <Route  path='/walletlist' element={<WalletList/>}></Route>
+      <Route  path='/addmoney/:walletId' element={<AddMoney/>}/>
+      <Route path='/addwallet' element={<AddWallet/>}></Route>
       </Routes>
-      
-        <Footer/>
-    </Router> */}
-    <Transactionhistory/>
-  </>
-     
-    )
+    </BrowserRouter>
+  )
 }
 
 export default App

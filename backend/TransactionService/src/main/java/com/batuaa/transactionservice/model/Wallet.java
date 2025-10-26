@@ -1,14 +1,11 @@
 package com.batuaa.transactionservice.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-
 
 
 @Entity
@@ -20,7 +17,7 @@ public class Wallet {
     private String walletId;
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "buyer_email", referencedColumnName = "emailId")// maps to User.userId
+    @JoinColumn(name = "buyer_email", referencedColumnName = "email_id")// maps to User.userId
     private Buyer buyer;
     private LocalDateTime createdAt;
     private BigDecimal balance;
@@ -75,4 +72,13 @@ public class Wallet {
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
+
+
+    public Wallet() {
+    }
+
+    public Wallet(String walletId) {
+        this.walletId = walletId;
+    }
+
 }

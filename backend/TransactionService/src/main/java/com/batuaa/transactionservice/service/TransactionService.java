@@ -4,6 +4,7 @@ import com.batuaa.transactionservice.dto.TransactionDateRangeDto;
 import com.batuaa.transactionservice.dto.TransactionRemarkDto;
 import com.batuaa.transactionservice.dto.TransactionTypeDto;
 import com.batuaa.transactionservice.dto.TransferDto;
+import com.batuaa.transactionservice.model.Role;
 import com.batuaa.transactionservice.model.Transaction;
 
 import java.util.List;
@@ -26,10 +27,10 @@ public interface TransactionService {
     List<Transaction> getAllTransactions(String emailId, String walletId);
 
     // Sort transactions by amount (ascending or descending)
-    List<Transaction> sortTransactionsByAmount(String walletId, String emailId,String sortOrder);
-
+    List<Transaction> sortTransactionsByAmount(String walletId, String emailId, String sortOrder);
     // Get a single transaction by walletId and email
     Transaction getTransactionByWalletId(String emailId, String walletId);
 
+    List<Transaction> findByAdminEmailAndRole(String email, Role role);
 }
 
