@@ -66,8 +66,6 @@ public class TransactionServiceTest {
     private Wallet walletTo_s;
     private Transaction transaction;
     private List<Transaction> transactionList;
-    private Buyer buyer;
-    private List<Transaction> transactionslist;
 
     @BeforeEach
     void setUp() {

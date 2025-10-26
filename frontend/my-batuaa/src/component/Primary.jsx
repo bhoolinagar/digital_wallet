@@ -60,7 +60,7 @@ const goToAddWallet = (emailId) => {
   
 return (
 <div >
-    <Box className="wallet-list-container"> 
+    <Box className="wallet-list-container">
  <Card
 
         sx={{
@@ -70,7 +70,7 @@ return (
           boxShadow: 3,
           borderColor: "#9828a2ff",
           borderBlockColor: "#ba357cff",
-          
+
         }}
       >
         <CardActionArea sx={{ backgroundColor: "#0F3A6E" }}>
@@ -102,7 +102,7 @@ return (
               >
                 Wallet Id : {primarywallet.walletId}
               </Typography>
-              
+
               <ClipboardWithIcon valueToCopy={primarywallet.walletId} />
             </Box>
             <Typography variant="body2" align="left" sx={{ color: "white" }}>
@@ -115,7 +115,7 @@ return (
             size="medium"
             color="primary"
             className="add-wallet-btn"
-            
+
             onClick={() => {
              goToWallet(primarywallet.walletId)
             }}
@@ -125,7 +125,7 @@ return (
         </CardActions>
       </Card>
 
- 
+
 
 
 
@@ -137,7 +137,7 @@ return (
 
       <CardActions className="wallet-card-actions">
         <Button size="medium" color="primary" className="add-wallet-btn"
-       
+
             onClick={()=>goToAddWallet(buyer_email)}
         >
           Add new Wallet
@@ -152,11 +152,15 @@ return (
 
       <CardActions className="wallet-card-actions">
         <Button size="medium" color="primary" className="add-wallet-btn">
+        <Button size="medium" color="primary" className="add-wallet-btn"
+        onClick={() =>
+          goToTransferMoney(primarywallet.walletId)}
+          >
           Transfer Money
         </Button>
       </CardActions>
     </Card>  
-    
+
      <Card className="wallet-card" sx={{borderRadius:4 ,width:270}}>
       <CardActionArea>
         <img src={shoppinyLogo} alt="Wallet" className="wallet-image" />
