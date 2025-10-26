@@ -1,15 +1,6 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  AppBar,
-  Box,
-  Toolbar,
-  Container,
-  Avatar,
-  Button,
-  Typography,
-} from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
+import { AppBar, Box, Toolbar, Container, Avatar, Button, Typography } from "@mui/material";
 import logo from "../src/images/mybatuaa.png";
 import personLogo from "../src/assets/user.png";
 import homeLogo from "../src/images/home_logo.png";
@@ -20,18 +11,17 @@ export default function Navbar() {
   const navigate = useNavigate();
   const handleLogout = () => {
     console.log("Logout clicked");
-    // Example: redirect to login page
     navigate("/login");
   };
 
   return (
     <AppBar
-    
+      position="fixed"
       sx={{
-        backgroundColor: "#ffffffff",
+        backgroundColor: "#e5efffff",
         width: "100vw",
-        borderRadius: 1,
         boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+        zIndex: 1100,
       }}
     >
       <Container maxWidth="xl">
@@ -40,33 +30,28 @@ export default function Navbar() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            minHeight: 100,
+            minHeight: { xs: 70, md: 100 },
+            flexDirection: { xs: "column", md: "row" },
+            gap: { xs: 1, md: 0 },
           }}
         >
           {/* Left: Logo */}
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <img
-              src={logo}
-              alt="My Batuaa Logo"
-              style={{ width: 90, height: 90 }}
-            />
+            <img src={logo} alt="My Batuaa Logo" style={{ width: 90, height: 90 }} />
           </Box>
 
-          {/* Center: Home + Dashboard */}
+          {/* Center: Dashboard link */}
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               flexDirection: "column",
               cursor: "pointer",
+              "&:hover": { transform: "scale(1.05)", transition: "0.2s" },
             }}
             onClick={() => navigate("/")}
           >
-            <img
-              src={homeLogo}
-              alt="Home Icon"
-              style={{ width: 50, height: 50 }}
-            />
+            <img src={homeLogo} alt="Home Icon" style={{ width: 50, height: 50 }} />
             <Typography
               variant="h6"
               sx={{
@@ -82,27 +67,18 @@ export default function Navbar() {
           </Box>
 
           {/* Right: User Info + Logout */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 2,
-            }}
-          >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                cursor: "pointer",
+                "&:hover": { transform: "scale(1.05)", transition: "0.2s" },
               }}
-        onClick={() => navigate("/walletlist")}
+              onClick={() => navigate("/walletlist")}
             >
-              <Avatar
-                alt="User Avatar"
-                src={personLogo}
-                sx={{ width: 50, height: 50 }}
-              />
-            
+              <Avatar alt="User Avatar" src={personLogo} sx={{ width: 50, height: 50 }} />
               <Typography
                 variant="subtitle1"
                 sx={{
@@ -118,19 +94,18 @@ export default function Navbar() {
 
             <Button
               sx={{
-                color: "#043253ff",
+                flexDirection:"column",
+                color: "#043253",
                 fontWeight: 600,
                 fontSize: 16,
                 textTransform: "none",
+                "&:hover": {
+                  backgroundColor: "rgba(15,58,110,0.1)",
+                  borderRadius: "8px",
+                },
               }}
               variant="text"
-              startIcon={
-                <img
-                  src={logoutLogo}
-                  alt="Logout Icon"
-                  style={{ width: 25, height: 25 }}
-                />
-              }
+              startIcon={<img src={logoutLogo} alt="Logout Icon" style={{ width: 50, height: 50 }} />}
               onClick={handleLogout}
             >
               Logout

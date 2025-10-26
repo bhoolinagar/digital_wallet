@@ -13,29 +13,43 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import './AddMoney.css';
 import axios from "axios";
 import { useParams } from "react-router-dom";
-
-
+import Footer from "./Footer";
+ import Navbar from "../Navbar";
 export default function AddMoney() {
-
 const { walletId } = useParams(); 
-
   const [formData, setFormData] = useState({ amount: '' });
+
+  const [errors, setErrors] = useState({});
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success", // success | error
   });
 
+  const validate=()=>{
+    const newErrors={}
+    if(!formData.amount.trim()){
+      newErrors.amount="Amount is required.";
+    } else if((isNaN(formData.amount)|| parseFloat(formData.amount)<=0)){
+       newErrors.amount="Enter a valid positive amount.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+
+  }
   //const walletId = "WAL8BD4C4117";
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
+ 
 
   const handleSubmit = async (event) => {
+    
     event.preventDefault();
-
+if (!validate()) return; // stop if invalid
+    console.log("Form submitted:", formData);
     try {
       const response = await axios.post(
         `http://localhost:8031/wallet/api/v1/add-money`,
@@ -55,12 +69,15 @@ const { walletId } = useParams();
       });
       setFormData({ amount: "" }); // reset form
     } catch (error) {
-      console.error("Error adding money:", error);
+      console.error("Error adding money:", error.response?.data.data || error.message);
       setSnackbar({
         open: true,
-        message: "Failed to add money. Please try again.",
+        message:
+          error.response?.data?.message ||
+          "Failed to add money. Please try again.",
         severity: "error",
       });
+
     }
   };
 
@@ -70,14 +87,18 @@ const { walletId } = useParams();
   };
 
   return (
+   
+    <div> <Navbar/>
     <form onSubmit={handleSubmit} className="add-money-form">
-      <Box>
+      <Box className='box-container'>
         <Box className="form-title">Add Money</Box>
 
         <TextField
           className="input-container"
           label="Amount"
           name="amount"
+          error={!!errors.amount}
+          helperText={errors.amount}
           value={formData.amount}
           onChange={handleChange}
           fullWidth
@@ -94,22 +115,9 @@ const { walletId } = useParams();
 
         <Button
           type="submit"
-          variant="contained"
+         className="submit-button contained"
           endIcon={<ArrowForwardIcon />}
-          sx={{
-            width: '50%',
-            height: 50,
-            mt: 2,
-            py: 1.5,
-            px: 4,
-            borderRadius: "40px",
-            backgroundColor: "#0F3A6E",
-            textTransform: "none",
-            fontSize: 20,
-            fontWeight: 600,
-            fontFamily: "Roboto Mono, monospace",
-            "&:hover": { backgroundColor: "#0d2e59" },
-          }}
+         
         >
           Submit
         </Button>
@@ -133,5 +141,7 @@ const { walletId } = useParams();
         </MuiAlert>
       </Snackbar>
     </form>
+    <Footer/>
+    </div>
   );
 }

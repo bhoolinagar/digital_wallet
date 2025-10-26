@@ -2,6 +2,7 @@ package com.batuaa.userprofile.service;
 
 import com.batuaa.userprofile.dto.WalletDto;
 import com.batuaa.userprofile.exception.BuyerNotFoundException;
+import com.batuaa.userprofile.exception.PrimaryWalletNotfound;
 import com.batuaa.userprofile.exception.WalletAlreadyFound;
 import com.batuaa.userprofile.exception.WalletNotFoundException;
 import com.batuaa.userprofile.model.Buyer;
@@ -18,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +42,8 @@ class WalletServiceImplTest {
     private WalletDto walletDto;
     private Buyer buyer;
     private Wallet wallet;
+    private Wallet wallet1;
+    private Wallet wallet2;
 
     @BeforeEach
     void setUp() {
@@ -65,6 +69,17 @@ class WalletServiceImplTest {
         wallet.setBankName("HDFC Bank");
         wallet.setBalance(new BigDecimal("1000"));
         wallet.setBuyer(buyer);
+
+
+        wallet1 = new Wallet();
+        wallet1.setWalletId("WAL123");
+        wallet1.setBuyer(buyer);
+        wallet1.setPrimary(true);
+
+        wallet2 = new Wallet();
+        wallet2.setWalletId("WAL456");
+        wallet2.setBuyer(buyer);
+        wallet2.setPrimary(false);
     }
 
     @Test
@@ -225,4 +240,60 @@ class WalletServiceImplTest {
         verify(buyerRepository, times(1)).findByEmailId("unknown@gmail.com");
         verify(walletRepository, never()).findAllByBuyer(any());
     }
+
+    //  Test: Successfully set a new primary wallet
+    @Test
+    void testSetPrimaryWallet_Success() {
+        when(walletRepository.findByBuyerEmailId(buyer.getEmailId()))
+                .thenReturn(Arrays.asList(wallet1, wallet2));
+
+        when(walletRepository.findById("WAL456"))
+                .thenReturn(Optional.of(wallet2));
+
+        List<Wallet> wallets = Arrays.asList(wallet1, wallet2);
+        walletService.setPrimaryWallet("WAL456", buyer.getEmailId());
+
+        assertFalse(wallet1.getPrimary(), "Old primary should be false");
+        assertTrue(wallet2.getPrimary(), "New primary should be true");
+
+        verify(walletRepository, times(1)).saveAll(anyList());
+        verify(walletRepository, times(1)).saveAll(wallets);
+    }
+
+    // Test: Wallet ID not found
+    @Test
+    void testSetPrimaryWallet_WalletNotFound() {
+        when(walletRepository.findByBuyerEmailId(buyer.getEmailId()))
+                .thenReturn(List.of(wallet1, wallet2));
+        when(walletRepository.findById("INVALID"))
+                .thenReturn(Optional.empty());
+
+        assertThrows(WalletNotFoundException.class,
+                () -> walletService.setPrimaryWallet("INVALID", buyer.getEmailId()));
+    }
+
+    // Test: Successfully get primary wallet
+    @Test
+    void testGetPrimaryWallet_Success() {
+        when(walletRepository.findByBuyerEmailIdAndIsPrimaryTrue(buyer.getEmailId()))
+                .thenReturn(Optional.of(wallet1));
+
+        Wallet result = walletService.getPrimaryWallet(buyer.getEmailId());
+
+        assertNotNull(result);
+        assertEquals(wallet1.getWalletId(), result.getWalletId());
+        verify(walletRepository, times(1))
+                .findByBuyerEmailIdAndIsPrimaryTrue(buyer.getEmailId());
+    }
+
+    //  Test: No primary wallet set
+    @Test
+    void testGetPrimaryWallet_NotFound() {
+        when(walletRepository.findByBuyerEmailIdAndIsPrimaryTrue(buyer.getEmailId()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(PrimaryWalletNotfound.class,
+                () -> walletService.getPrimaryWallet(buyer.getEmailId()));
+    }
+
 }

@@ -21,12 +21,10 @@ import java.util.List;
 public class WalletController {
     @Autowired
     private final WalletService walletService;
-
     @Autowired
     public WalletController(WalletService walletService) {
         this.walletService = walletService;
     }
-
     // Link Bank Account
     @PostMapping("/link-bank-account")
     public ResponseEntity<ApiResponse> linkBankAccountToWallet(@Valid @RequestBody WalletDto wallet) {
@@ -34,13 +32,11 @@ public class WalletController {
         return ResponseEntity.status(201)
                 .body(new ApiResponse("success", "Wallet generated successfully", walletId));
     }
-
     // Add Money to Wallet
     @PostMapping("/add-money")
     public ResponseEntity<ApiResponse> addMoneyToWallet(
             @RequestParam String walletId,
             @RequestParam BigDecimal amount) {
-
         String message = walletService.updateMoneyFromBank(walletId, amount);
         return ResponseEntity.ok(new ApiResponse("success", message));
     }

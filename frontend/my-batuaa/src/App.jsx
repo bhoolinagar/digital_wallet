@@ -1,15 +1,12 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import HomePage from "./pages/HomePage";
-import RegisterPage from "./pages/RegisterPage";
-import LoginPage from "./pages/LoginPage";
-import './App.css'
-import Dashboard from './dashboard/Dashbaord.jsx'
-import { BrowserRouter, Route,Router,Routes } from 'react-router-dom'
-import WalletList from './dashboard/WalletList.jsx'
-import AddMoney from './dashboard/AddMoney.jsx'
-import AddWallet from './dashboard/AddWallet.jsx'
 
+import './App.css'
+import Dashboard from './component/Dashbaord.jsx'
+import { BrowserRouter, Route,Router,Routes } from 'react-router-dom'
+import WalletList from './component/WalletList.jsx'
+import AddMoney from './component/AddMoney.jsx'
+import AddWallet from './component/AddWallet.jsx'
+import Navbar from './Navbar.jsx'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -18,26 +15,14 @@ function App() {
         <Route path="/login" element={<LoginPage />} /> */}
   return (
     <BrowserRouter> 
-    <Welcomepage />
+     <Navbar />
     <Routes>  
       <Route path='/' element={<Dashboard></Dashboard>}/>
       <Route  path='/walletlist' element={<WalletList/>}></Route>
       <Route  path='/addmoney/:walletId' element={<AddMoney/>}/>
-      <Route path='/addwallet' element={<AddWallet/>}></Route>
-   <Route path="/" element={<Welcomepage/>} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/login" element={<LoginPage />} />
-   
-      <Routes>
-  
+      <Route path='/addwallet/:emailId' element={<AddWallet/>}></Route>
+      </Routes>
     </BrowserRouter>
-    // <div>
-    //   {/* <h3>Home page</h3> */}
-    //   {/* <Dashboard /> */}
-    //   <Welcomepage/>
-    //   <LoginPage/>
-    //   <RegisterPage/>
-    // </div>
   )
 }
 

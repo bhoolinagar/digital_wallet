@@ -1,12 +1,22 @@
 .add-money-form {
+  
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 20px;
+
   background-color: #f3f5f9;
-  padding: 40px;
+  padding: 40px 50px;
   border-radius: 40px;
   width: 450px;
-  margin: 0 auto;
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+ 
 }
 /* Heading */
 .form-title {
@@ -57,7 +67,10 @@
 
 
 .submit-button:hover {
+
   background-color: #0d2e59;
+  transform: scale(1.05);
+  transition: 0.3s;
 }
 .submit-button {
   margin-top: 10px;
@@ -65,7 +78,42 @@
   width: 60%;
   height: 50px;
   border-radius: 100px;
-  background-color: #b2c933;
+  background-color: hsl(256, 94%, 33%);
   font-size: 18px;
+  cursor: pointer;
   text-transform: none;
 }
+
+.submit-button.contained {
+  margin-top: 10px;
+  padding: 12px 3px;
+  width: 220px;
+  max-width: 250px; /* optional: prevent huge buttons on wide screens */
+  height: 50px;
+  border-radius: 25px;
+
+  background-color: #0d2e59;
+  color: #ffffff;
+  font-size: 18px;
+  
+  cursor: pointer;
+  text-transform: none;
+
+  transition: transform 0.3s, background-color 0.3s; /* smooth hover */
+}
+
+.submit-button.contained:hover {
+  background-color: #3e6ead;
+  transform: scale(1.05);
+
+}
+
+.box-container{
+  display: "flex";
+flex-direction: "column";
+                align-items: "center";
+                cursor: "pointer";  
+                }
+.box-container:hover{
+transform: "scale(1.05)"; transition: "0.2s" 
+    }            

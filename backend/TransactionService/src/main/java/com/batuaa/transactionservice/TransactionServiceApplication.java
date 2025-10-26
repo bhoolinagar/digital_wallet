@@ -13,6 +13,7 @@ public class TransactionServiceApplication {
 		SpringApplication.run(TransactionServiceApplication.class, args);
 	}
 
+ /*
     @Bean
     public FilterRegistrationBean getFilter()
     {
@@ -23,4 +24,6 @@ public class TransactionServiceApplication {
         return filterbean;
 
     }
+
+  */
 }
