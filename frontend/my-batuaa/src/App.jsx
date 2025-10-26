@@ -3,6 +3,8 @@ import { useState } from 'react'
 import './App.css'
 import Dashboard from './dashboard/Dashbaord.jsx'
 import { BrowserRouter, Route,Router,Routes } from 'react-router-dom'
+import RegisterPage from './component/Register.jsx';
+import Login from './component/Login.jsx';
 import WalletList from './dashboard/WalletList.jsx'
 import AddMoney from './dashboard/AddMoney.jsx'
 import AddWallet from './dashboard/AddWallet.jsx'
@@ -16,7 +18,9 @@ function App() {
         <Route path="/login" element={<LoginPage />} /> */}
   return (
     <BrowserRouter> 
-    <Routes>  
+    <Routes> 
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/login" element={<Login />} /> 
       <Route path='/' element={<Dashboard></Dashboard>}/>
       <Route  path='/walletlist' element={<WalletList/>}></Route>
       <Route  path='/addmoney/:walletId' element={<AddMoney/>}/>
