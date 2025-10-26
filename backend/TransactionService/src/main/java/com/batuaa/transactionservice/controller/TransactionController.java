@@ -19,7 +19,7 @@ import java.util.List;
 
 @RequestMapping("/transaction/api/v2")
 public class TransactionController {
-//Antimas
+
     //    @Autowired
     private final TransactionService transactionService;
 
