@@ -16,7 +16,9 @@ import { useParams } from "react-router-dom";
 import Footer from "./Footer";
  import Navbar from "../Navbar";
 export default function AddMoney() {
+  let token= sessionStorage.getItem("token")
 const { walletId } = useParams(); 
+console.log("WalletId "+ walletId)
   const [formData, setFormData] = useState({ amount: '' });
 
   const [errors, setErrors] = useState({});
@@ -59,6 +61,8 @@ if (!validate()) return; // stop if invalid
             walletId: walletId,
             amount: formData.amount,
           },
+          headers: { "Content-Type": "application/json" , 
+            Authorization: `Bearer ${token}`,}
         }
       );
 

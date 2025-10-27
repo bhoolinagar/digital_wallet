@@ -14,9 +14,12 @@ import {
 import { CallMadeRounded, CallReceivedRounded } from "@mui/icons-material";
 import "./TransactionHistory.css";
 import MuiAlert from "@mui/material/Alert";
+import PrimaryWallet from "./Primary";
 const BASE_URL = "http://localhost:8086/transaction/api/v2";
 
-const Transactions = ({ emailId = "pawan@gmail.com", walletId = "WAL1698231B2" }) => {
+const Transactions = ({ emailId=sessionStorage.getItem("email"),  primaryWallet }) => {
+  let token =sessionStorage.getItem("token")
+  
   const [transactions, setTransactions] = useState([]);
   const [filter, setFilter] = useState("");
   const [type, setType] = useState("All Types");
@@ -31,22 +34,30 @@ const Transactions = ({ emailId = "pawan@gmail.com", walletId = "WAL1698231B2" }
     severity: "success", // success | error
   });
 
-
+console.log("P dal: "+ primaryWallet)
   useEffect(() => {
+    if (primaryWallet) {
+   // fetchTransactions(primaryWallet.walletId);
     loadTransactions();
-  }, []);
-   const params = { walletId , emailId};
+  }
+    
+  }, [primaryWallet,emailId,token,type, filter, fromDate, toDate,]);
+  // const params = { primaryWallet.walletId , emailId};
   // Fetch transactions from backend with optional filters
+
+   
   const loadTransactions = async () => {
+    if (!primaryWallet) return;
+   const walletId = primaryWallet;
     try {
    
       let res
       if (type && type !== "All Types") {
        console.log("Filtering by type:", type);  
         params.type = type;    
-       res = await axios.post(`${BASE_URL}/filter-by-type`, { walletId,emailId,type },
+       res = await axios.post(`${BASE_URL}/filter-by-type`, { walletId, emailId,type },
         { 
-          headers: { "Content-Type": "application/json" } });
+          headers: { "Content-Type": "application/json",Authorization: `Bearer ${token}`, } });
        setTransactions(res.data.data);
        console.log("Fetched data: ", res.data)
       setSnackbar({
@@ -62,7 +73,8 @@ const Transactions = ({ emailId = "pawan@gmail.com", walletId = "WAL1698231B2" }
            
        res = await axios.post(`${BASE_URL}/view-transactions-by-remark`, { walletId,emailId,remark },
         { 
-          headers: { "Content-Type": "application/json" } });
+          headers: { "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, } });
        setTransactions(res.data.data);
        console.log("Fetched data:  by remarks", res.data)
        
@@ -80,9 +92,10 @@ const Transactions = ({ emailId = "pawan@gmail.com", walletId = "WAL1698231B2" }
        const endDate=toDate;
          console.log("Filtering by date:", fromDate);  
            
-       res = await axios.post(`${BASE_URL}/filter-by-date`, { walletId,emailId,startDate,endDate },
+       res = await axios.post(`${BASE_URL}/filter-by-date`, 
+        { walletId,emailId,startDate,endDate },
         { 
-          headers: { "Content-Type": "application/json" } });
+          headers: { "Content-Type": "application/json" ,Authorization: `Bearer ${token}`,} });
        setTransactions(res.data.data);
        console.log("Fetched data:  by bate", res.data)
       setSnackbar({
@@ -94,7 +107,9 @@ const Transactions = ({ emailId = "pawan@gmail.com", walletId = "WAL1698231B2" }
       }
     
       else{
-      res = await axios.get(`${BASE_URL}/all-transactions`, { params });
+      res = await axios.get(`${BASE_URL}/all-transactions`, { params },{ 
+          headers: { 
+            Authorization: `Bearer ${token}`,} });
      console.log("Fetched data: ", res.data)
       setTransactions(res.data);
       setSnackbar({

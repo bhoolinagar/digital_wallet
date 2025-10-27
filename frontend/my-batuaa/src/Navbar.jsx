@@ -8,12 +8,19 @@ import logoutLogo from "../src/images/logout_logo.png";
 import "./Navbar.css";
 
 export default function Navbar() {
+  let buyer_email= sessionStorage.getItem("email")
+  let buyer_Name= sessionStorage.getItem("name")
+  console.log("Email:ID ", buyer_email)
   const navigate = useNavigate();
-  const handleLogout = () => {
-    console.log("Logout clicked");
+const handleLogout = () => {
+sessionStorage.clear();
+ console.log("Logout clicked");
     navigate("/login");
   };
-
+const handleDashboard = () => { 
+    console.log("dashboard clicked");
+    navigate(`/dashboard`);
+  };
   return (
     <AppBar
       position="fixed"
@@ -49,7 +56,7 @@ export default function Navbar() {
               cursor: "pointer",
               "&:hover": { transform: "scale(1.05)", transition: "0.2s" },
             }}
-            onClick={() => navigate("/")}
+            onClick={() => handleDashboard()}
           >
             <img src={homeLogo} alt="Home Icon" style={{ width: 50, height: 50 }} />
             <Typography
@@ -88,7 +95,7 @@ export default function Navbar() {
                   fontWeight: 600,
                 }}
               >
-                Bhooli Nagar
+                {buyer_Name}
               </Typography>
             </Box>
 

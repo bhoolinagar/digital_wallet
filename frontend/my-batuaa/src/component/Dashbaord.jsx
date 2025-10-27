@@ -19,14 +19,15 @@ import Footer from './Footer';
 import TransactionHistory from './TransactionHistory';
 
 export default function Dashboard() {
+const [primarywallet, setPrimaryWallet] = React.useState(null);
 
   return (
     <div>
      <Navbar></Navbar>
      <Box height={20}/>
-     <PrimaryWallet></PrimaryWallet>
+     <PrimaryWallet setPrimaryWallet={setPrimaryWallet}></PrimaryWallet>
       <Box height={20}/>
-     <TransactionHistory/>
+     <TransactionHistory primaryWallet={primarywallet}/>
      <Footer></Footer>
 {/*<WalletList/> */}
  </div>

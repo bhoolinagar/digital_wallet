@@ -12,7 +12,8 @@ import EmailIcon from "@mui/icons-material/Email";
 import LockIcon from "@mui/icons-material/Lock";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import axios from "axios";
-
+import Footer from "./Footer";
+import PublicAppBar from "../landing/PublicAppBar";
 export default function Login() {
   const [formData, setFormData] = useState({ emailId: "", password: "" });
   const [snackbar, setSnackbar] = useState({
@@ -52,14 +53,22 @@ export default function Login() {
         "http://localhost:8031/buyers/api/v1/login",
         formData,
         { headers: { "Content-Type": "application/json" } }
+
       ); 
       console.log("login API response:", response);
 
-      const { token, role } = response.data.data;
+      const { token, role,email ,name} = response.data.data;
 
       // Save token and role
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
+      //localStorage.setItem("token", token);
+      //localStorage.setItem("role", role);
+      //localStorage.setItem("email",email)
+
+      sessionStorage.setItem("email",email)
+      sessionStorage.setItem("token",token)
+      sessionStorage.setItem("role", role)
+       sessionStorage.setItem("name", name)
+
 
       // Show success message
       setSnackbar({
@@ -72,7 +81,7 @@ export default function Login() {
       
       setTimeout(() => {
       if (role === "ADMIN") navigate("/admin");
-      else navigate("/dashboard");
+      else navigate(`/dashboard`);
     }, 1000); // 
 
   } catch (error) {
@@ -85,6 +94,8 @@ export default function Login() {
   };
 
   return (
+    <div>
+      <PublicAppBar/>
     <Box
       sx={{
         minHeight: "100vh",
@@ -202,5 +213,7 @@ export default function Login() {
         </MuiAlert>
       </Snackbar>
     </Box>
+    <Footer/>
+    </div>
   );
 }

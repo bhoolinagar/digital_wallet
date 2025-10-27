@@ -64,7 +64,8 @@ public class BuyerController {
             String message = buyer.getRole() == Role.ADMIN ? "Admin login successful" : "Buyer login successful";
 
             // Return token + role if needed
-            Map<String, String> data = Map.of("token", token, "role", buyer.getRole().name());
+            Map<String, String> data = Map.of("token", token, "role", buyer.getRole().name(),"email",
+                    buyer.getEmailId(),"name", buyer.getName());
 
             // Return consistent ApiResponse
             return ResponseEntity.ok(new ApiResponse("success", message, data));

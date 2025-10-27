@@ -30,9 +30,12 @@ import { ClipboardListIcon, ClipboardWithIcon } from "flowbite-react";
 import Navbar from "../Navbar.jsx";
 import Footer from "./Footer.jsx";
 
+const BASE_URL = "http://localhost:8031/wallet/api/v1";
 const WalletDashboard = () => {
-  const buyerEmail = "priyanka@gmail.com"; // replace with dynamic user email if needed
-  const [wallets, setWallets] = useState([]);
+   let buyerEmail= sessionStorage.getItem("email") // replace with dynamic user email if needed
+  let token=sessionStorage.getItem("token");
+  console.log(" Session sotrage token: ",token)
+   const [wallets, setWallets] = useState([]);
   const [primaryWallet, setPrimaryWallet] = useState(null);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ open: false, message: "", severity: "success" });
@@ -42,12 +45,19 @@ const WalletDashboard = () => {
   const goToWallet = (walletId) => {
     navigate(`/addmoney/${walletId}`);
   };
+
+  // 🔹 Helper: attach token globally to every axios request
+  const axiosInstance = axios.create({
+    baseURL: BASE_URL,
+    headers: { Authorization: `Bearer ${token}` },
+  });
   
   // Fetch all wallets
   const fetchWallets = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:8031/wallet/api/v1/wallet-list/${buyerEmail}`);
+      const res = await axiosInstance.get(`/wallet-list/${buyerEmail}`
+        );
       setWallets(res.data.data || []);
     } catch (err) {
       console.error("Failed to fetch wallets:", err);
@@ -61,8 +71,9 @@ const WalletDashboard = () => {
   // Fetch primary wallet
   const fetchPrimaryWallet = async () => {
     try {
-      const res = await axios.get(`http://localhost:8031/wallet/api/v1/primary`, {
-        params: { email: buyerEmail },
+      const res = await axiosInstance.get(`/primary`, {
+        params: { email: buyerEmail }
+       
       });
       setPrimaryWallet(res.data.data);
     } catch (err) {
@@ -74,10 +85,11 @@ const WalletDashboard = () => {
   // Set a wallet as primary
   const setPrimaryWalletHandler = async (walletId) => {
     try {
-      const res = await axios.put(
-        `http://localhost:8031/wallet/api/v1/set-primary`,
+      const res = await axiosInstance.put(
+        `/set-primary`,
         null,
-        { params: { walletId, email: buyerEmail } }
+        { params: { walletId, email: buyerEmail } ,
+           }
       );
       setAlert({ open: true, message: res.data.message, severity: "success" });
       // Refresh both wallet list and primary wallet
@@ -90,6 +102,10 @@ const WalletDashboard = () => {
   };
 
   useEffect(() => {
+     if (!token) {
+      navigate("/login"); // Redirect if token missing
+      return;
+    }
     fetchWallets();
     fetchPrimaryWallet();
   }, []);

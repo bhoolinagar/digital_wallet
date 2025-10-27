@@ -18,7 +18,11 @@ import Navbar from "../Navbar";
 import Footer from "./Footer";
 
 export default function AddWallet() {
-  const {emailId} = useParams();
+  let emailId = sessionStorage.getItem("email")
+  //console.log("Buyer email:",emailId)
+  // useParams();
+  let token =sessionStorage.getItem("token")
+
 const [formData, setFormData] = useState({
     accountNumber: "",
     bankName: "",
@@ -83,7 +87,8 @@ const [formData, setFormData] = useState({
         `http://localhost:8031/wallet/api/v1/link-bank-account`,
         payload, 
          { 
-          headers: { "Content-Type": "application/json" } }
+          headers: { "Content-Type": "application/json" , 
+            Authorization: `Bearer ${token}`,} }
       );
 
       console.log("Message :"+ response.data.message)
@@ -92,7 +97,7 @@ const [formData, setFormData] = useState({
         message: response.data.data.message || "New wallet generated successfully!",
         severity: "success",
       });
-     setFormData({ accountNumber: "", bankName: "", amount: "" });
+     setFormData({ accountNumber: "", bankName: "", balance: "" });
     } catch (error) {
      console.error("Error to generate wallet:", error.response?.data.data || error.message);
       setSnackbar({

@@ -9,80 +9,95 @@ import {
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import axios from "axios";
-import "../dashboard/AddMoney.css";
+import { useLocation, useNavigate } from "react-router-dom";
+import "../component/AddMoney.css";
 
 export default function TransferMoney() {
-    // using state to handle loading spinner
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Get email and primary wallet from state or session
+  const { email, primaryWalletId } = location.state || {};
+  const fromBuyerEmail = email || sessionStorage.getItem("email");
+  const token = sessionStorage.getItem("token");
+ console.log(" token "+ token+"  walletId "+ primaryWalletId)
   const [loading, setLoading] = useState(true);
-    // using state to store list of user's wallets
   const [wallets, setWallets] = useState([]);
-//   using state to store form input values
+  const [message, setMessage] = useState("");
+
   const [formData, setFormData] = useState({
-    fromWalletId: "",
+    fromWalletId: primaryWalletId || "",
     toWalletId: "",
     amount: "",
     remarks: "",
   });
-//    state to display messages (errors/success)
-  const [message, setMessage] = useState("");
-//  currently Hardcoded the sender email, later this will be taken from session storage
-  const fromBuyerEmail = "bhoolinagar@gmail.com";
 
-//  pulling the user's wallet list when component initailly moounts
+  // Fetch wallets on mount
   useEffect(() => {
-    axios
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
-      .get(`http://localhost:8031/wallet/api/v1/wallet-list/${fromBuyerEmail}`)
+    if (!fromBuyerEmail) {
+      setMessage("User email not found. Please login again.");
+      setLoading(false);
+      return;
+    }
+
+    axios
+      .get(`http://localhost:8031/wallet/api/v1/wallet-list/${encodeURIComponent(fromBuyerEmail)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         const apiResponse = res.data;
-        console.log("API Response:", res.data);
+        console.log("Wallet list response:", apiResponse);
 
-        //  if wallets exist, set first wallet as default "fromWalletId" a
-        // s my current logic assumes that there is at present only 1 wallet in the list, 
-        // logic can be modified based on primary.jsx
-        if (apiResponse.status === "success" && apiResponse.data.length > 0) {
+        if (apiResponse.status === "success" && apiResponse.data?.length > 0) {
           setWallets(apiResponse.data);
-          setFormData((prev) => ({
-            ...prev,
-            fromWalletId: apiResponse.data[0].walletId,
-          }));
+
+          // Set default fromWalletId if not provided via props
+          if (!formData.fromWalletId) {
+            setFormData((prev) => ({
+              ...prev,
+              fromWalletId: apiResponse.data[0].walletId,
+            }));
+          }
         } else {
           setMessage("No wallets found for this user.");
         }
       })
       .catch((err) => {
-        const errMsg = err.response?.data?.message || "Error fetching wallets";
-        setMessage(errMsg);
+        console.error("Failed to fetch wallets:", err);
+        setMessage(err.response?.data?.message || "Error fetching wallets.");
       })
-    //  Hiding loading spinner after request
-      .finally(() => setLoading(false));  
+      .finally(() => setLoading(false));
   }, []);
 
-//   Handling form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-//  handling form submission
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //  added basic validation. 
     if (!formData.fromWalletId || !formData.toWalletId || !formData.amount) {
-      setMessage("Please fill all fields.");
+      setMessage("Please fill all required fields.");
       return;
     }
 
     setLoading(true);
     try {
-      // getting my receiver email using walletId
+      // Get receiver email by walletId
       const emailRes = await axios.get(
-        `http://localhost:8031/wallet/api/v1/details/${formData.toWalletId}`
+        `http://localhost:8031/wallet/api/v1/details/${formData.toWalletId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      const receiverEmail = emailRes.data.data.buyerEmail;
-      console.log("Receiver Email:", receiverEmail);
+      const receiverEmail = emailRes.data.data?.buyerEmail;
+      if (!receiverEmail) {
+        throw new Error("Receiver wallet not found.");
+      }
 
-      // Building payload after fetching receiver email
       const payload = {
         fromWalletId: formData.fromWalletId,
         toWalletId: formData.toWalletId,
@@ -91,26 +106,24 @@ export default function TransferMoney() {
         fromBuyerEmailId: fromBuyerEmail,
         toBuyerEmailId: receiverEmail,
       };
-      console.log("Submitting payload:", payload);
+      console.log("Submitting transfer payload:", payload);
 
-    //    generating transaction
       const res = await axios.post(
         "http://localhost:8086/transaction/api/v2/transfer-wallet",
-        payload
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
-      setMessage(res.data.message);
-
-      // reste form 
-      setFormData((prev) => ({
-        ...prev,
-        toWalletId: "",
-        amount: "",
-        remarks: "",
-      }));
+      setMessage(res.data.message || "Transaction successful!");
+      setFormData((prev) => ({ ...prev, toWalletId: "", amount: "", remarks: "" }));
     } catch (err) {
-      const errMsg = err.response?.data?.message || "Transaction failed.";
-      setMessage(errMsg);
+      console.error("Transaction error:", err);
+      setMessage(err.response?.data?.message || err.message || "Transaction failed.");
     } finally {
       setLoading(false);
     }
@@ -194,12 +207,12 @@ export default function TransferMoney() {
       >
         Submit
       </Button>
-{/* Displaying  message */} 
+
       {message && (
         <Box
           sx={{
             mt: 2,
-            color: message.startsWith("Transaction") ? "green" : "red",
+            color: message.includes("successful") ? "green" : "red",
           }}
         >
           {message}

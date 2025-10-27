@@ -23,64 +23,83 @@ import { esES } from "@mui/material/locale";
 import { useNavigate } from "react-router-dom";
 
 import { ClipboardWithIcon } from "flowbite-react";
-export default function PrimaryWallet() {
 
-  const [primarywallet, setprimaryWallet]=useState([])
-  const [wallet_id, setWalletId]=useState("")
-  const buyer_email="priyanka@gmail.com"
+const BASE_URL = "http://localhost:8031/wallet/api/v1";
 
-  // const primary_wallet_id=""
+export default function PrimaryWallet(props) {
+  const [primaryWallet, setPrimaryWallet] = useState(null);
+  const [walletId, setWalletId] = useState("");
+
+  const buyerEmail = sessionStorage.getItem("email");
+  const token = sessionStorage.getItem("token");
+
   const navigate = useNavigate();
 
-const goToWallet = (walletId) => {
-  navigate(`/addmoney/${walletId}`);
-};
+  // Create axios instance once
+  const axiosInstance = axios.create({
+    baseURL: BASE_URL,
+  });
 
-const goToTransferMoney = (walletId) => {
-  navigate("/TransferMoney", {
-    state: {
-      email: "bhoolinagar@gmail.com",
-      primaryWalletId: walletId,
+  // Attach token automatically
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      const token = sessionStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
     },
-  });
+    (error) => Promise.reject(error)
+  );
+
+  const goToAddWallet = () => {
+  navigate(`/addwallet`);
 };
-
-  const [start, setStart] = useState(0);
-  // show 7 cards initiall
-
-const limit=5; // only show 5 card per view 
- 
-// Move to previous 5 cards
-  const handlePrev = () => {
-    if (start > 0) {
-      setStart((prev) => prev - limit);
-     }
+  const goToWallet = (walletId) => {
+    navigate(`/addmoney/${walletId}`);
   };
-  // Move to next 5 cards
-  const handleNext = () => {
-    if (start+limit< wallets.length) {
-      setStart((prev) => prev + limit);
-    
+
+  const goToTransferMoney = (walletId) => {
+    if (!walletId || !buyerEmail) {
+      console.error("Wallet ID or email missing!");
+       alert("Cannot transfer money: wallet or email missing.");
+      return;
     }
+
+    navigate("/transferMoney", {
+      state: {
+        email: buyerEmail,
+        primaryWalletId: walletId,
+      },
+    });
   };
-const goToAddWallet = (emailId) => {
-  navigate(`/addwallet/${emailId}`);
-};
 
-  useEffect(()=>{
-  // axios.get("http://localhost:8031/wallet/api/v1/wallet-list/"+buyer_email)
-   axios.get(`http://localhost:8031/wallet/api/v1/primary?email=${buyer_email}`)
-   .then((res)=>{
-    setprimaryWallet(res.data.data || [])
-  setWalletId(res.data.data.walletId)
-  console.log(" rest data: ")
-  console.log(res.data)
-}) .catch((err) => {
-    console.error("Failed to fetch wallets:", err);
-    setprimaryWallet([]); // fallback to empty array
-  });
+  useEffect(() => {
+    if (!token) {
+      navigate("/login"); // redirect if no token
+      return;
+    }
 
-},[])
+    const fetchPrimaryWallet = async () => {
+      try {
+        const res = await axiosInstance.get(`/primary`, {
+          params: { email: buyerEmail },
+        });
+
+        if (res.data?.data) {
+          setPrimaryWallet(res.data.data);
+          setWalletId(res.data.data.walletId);
+          console.log("Primary wallet:", res.data.data);
+       props.setPrimaryWallet(res.data.data.walletId)
+        }
+      } catch (err) {
+        console.error(" Failed to fetch primary wallet:", err);
+        setPrimaryWallet(null);
+      }
+    };
+
+    fetchPrimaryWallet();
+  }, [buyerEmail, token, navigate]); // dependencies
 
   // Get the current visible wallets
 //const visibleWallets = wallets.slice(start, start + limit);
@@ -112,7 +131,7 @@ return (
               Wallet
             </Typography>
             <Typography variant="body2" align="left" sx={{ color: "white" }}>
-              Email : {buyer_email}
+              Email : {buyerEmail}
             </Typography>
             <Box
               sx={{
@@ -127,13 +146,13 @@ return (
                 align="left"
                 sx={{ color: "white" }}
               >
-                Wallet Id : {primarywallet.walletId}
+                Wallet Id : {primaryWallet?.walletId|| "N/A"}
               </Typography>
 
-              <ClipboardWithIcon valueToCopy={primarywallet.walletId} />
+              <ClipboardWithIcon valueToCopy={primaryWallet?.walletId||"N/A"} />
             </Box>
             <Typography variant="body2" align="left" sx={{ color: "white" }}>
-              Balance :  ₹ {primarywallet.balance}
+              Balance :  ₹ {primaryWallet?.balance||0}
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -144,18 +163,13 @@ return (
             className="add-wallet-btn"
 
             onClick={() => {
-             goToWallet(primarywallet.walletId)
+             goToWallet(primaryWallet?.walletId||null)
             }}
           >
             Add Money
           </Button>
         </CardActions>
       </Card>
-
-
-
-
-
 
    <Card className="wallet-card" sx={{borderRadius:4 ,width:270}}>
       <CardActionArea>
@@ -165,7 +179,7 @@ return (
       <CardActions className="wallet-card-actions">
         <Button size="medium" color="primary" className="add-wallet-btn"
 
-            onClick={()=>goToAddWallet(buyer_email)}
+            onClick={()=>goToAddWallet()}
         >
           Add new Wallet
         </Button>
@@ -181,24 +195,22 @@ return (
       </CardActionArea>
 
       <CardActions className="wallet-card-actions">
-        <Button size="medium" color="primary" className="add-wallet-btn"
+      
+  <Button size="medium" color="primary" className="add-wallet-btn"
         onClick={() =>
-          goToTransferMoney(wallets[0]?.walletId)}
+          goToTransferMoney(primaryWallet?.walletId||null)}
           >
           Transfer Money
         </Button>
       </CardActions>
     </Card>  
 
-
      <Card className="wallet-card" sx={{borderRadius:4 ,width:270}}>
       <CardActionArea>
         <img src={shoppinyLogo} alt="Wallet" className="wallet-image" />
       </CardActionArea>
-
       <CardActions className="wallet-card-actions">
-        <Button size="medium" color="primary" className="add-wallet-btn" 
-        >
+        <Button size="medium" color="primary" className="add-wallet-btn"  >
             Shopping
         </Button>
       </CardActions>

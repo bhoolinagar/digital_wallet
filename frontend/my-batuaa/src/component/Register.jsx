@@ -100,6 +100,8 @@ export default function Register() {
   };
 
   return (
+    <div>
+      <PublicAppBar/>
     <Box
       sx={{
         minHeight: "100vh",
@@ -263,5 +265,7 @@ export default function Register() {
         </MuiAlert>
       </Snackbar>
     </Box>
+    <Footer/>
+    </div>
   );
 }

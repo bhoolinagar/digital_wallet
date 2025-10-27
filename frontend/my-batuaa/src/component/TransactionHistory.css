@@ -145,9 +145,6 @@
   text-transform: none;
   transition: transform 0.3s, background-color 0.3s, color 0.3s;
 }
-.clear-button.contained{
-
-}
 
 .clear-button.contained:hover {
   background-color: hsl(0, 70%, 45%);
