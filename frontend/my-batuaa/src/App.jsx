@@ -16,7 +16,7 @@ import { Reports } from './adminDashboard/Reports.jsx'
 
 function App() {
   return (
-    
+
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
@@ -31,7 +31,7 @@ function App() {
 
         {/* Admin routes (nested under /admin) */}
         <Route path="/admin" element={<AdminLayout />}>
-       {/*  <Route index element={<AdminDashboard />} /> */} 
+       {/*  <Route index element={<AdminDashboard />} /> */}
            <Route index element={<Navigate to="admindashboard" replace />} />
           <Route path="admindashboard" element={<AdminDashboard />} />
           <Route path="reports" element={<Reports />} />
