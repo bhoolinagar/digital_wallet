@@ -11,6 +11,8 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../component/AddMoney.css";
+import Footer from "../component/Footer";
+import Navbar from "../Navbar";
 
 export default function TransferMoney() {
   const location = useLocation();
@@ -132,6 +134,8 @@ export default function TransferMoney() {
   if (loading) return <CircularProgress sx={{ mt: 10, color: "#0F3A6E" }} />;
 
   return (
+    <div>
+      <Navbar/>
     <form onSubmit={handleSubmit} className="add-money-form">
       <Box className="form-title">Transfer Money</Box>
 
@@ -219,5 +223,7 @@ export default function TransferMoney() {
         </Box>
       )}
     </form>
+    <Footer/>
+    </div>
   );
 }

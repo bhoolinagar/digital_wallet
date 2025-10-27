@@ -17,8 +17,8 @@ import EmailIcon from "@mui/icons-material/Email";
 import LockIcon from "@mui/icons-material/Lock";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import axios from "axios";
-
-
+import PublicAppBar from "../landing/PublicAppBar";
+import Footer from "./Footer";
 export default function Register() {
   const [formData, setFormData] = useState({
     name: "",
@@ -101,7 +101,7 @@ export default function Register() {
 
   return (
     <div>
-      <PublicAppBar/>
+     
     <Box
       sx={{
         minHeight: "100vh",
@@ -256,7 +256,7 @@ export default function Register() {
           onClose={handleCloseSnackbar}
           sx={{
             backgroundColor:
-              snackbar.severity === "success" ? "#f44336" : "#d32f2f",
+              snackbar.severity === "success" ? "#0ebe01ff" : "#d32f2f",
             color: "white",
             fontWeight: 600,
           }}

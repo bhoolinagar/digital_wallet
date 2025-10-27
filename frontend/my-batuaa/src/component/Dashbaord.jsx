@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import PrimaryWallet from './Primary';
 import Footer from './Footer';
 import TransactionHistory from './TransactionHistory';
-
+import TransactionCard from './TransactionCard';
 export default function Dashboard() {
 const [primarywallet, setPrimaryWallet] = React.useState(null);
 
@@ -27,14 +27,15 @@ const [primarywallet, setPrimaryWallet] = React.useState(null);
   const goToAdminDashboard = () => {
     navigate('/admindashboard'); // redirects to AdminDashboard route
   };
-
+sessionStorage.setItem("walletId",primarywallet)
   return (
     <div>
      <Navbar></Navbar>
      <Box height={20}/>
      <PrimaryWallet setPrimaryWallet={setPrimaryWallet}></PrimaryWallet>
       <Box height={20}/>
-     <TransactionHistory primaryWallet={primarywallet}/>
+       <TransactionCard  primaryWallet={primarywallet}/>
+     {/* <TransactionHistory primaryWallet={primarywallet}/> */}
      <Footer></Footer>
      
 

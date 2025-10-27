@@ -15,7 +15,7 @@ export default function Navbar() {
 const handleLogout = () => {
 sessionStorage.clear();
  console.log("Logout clicked");
-    navigate("/login");
+    navigate("/");
   };
 const handleDashboard = () => { 
     console.log("dashboard clicked");

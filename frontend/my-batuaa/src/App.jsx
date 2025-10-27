@@ -13,6 +13,7 @@ import Welcomepage from './landing/WelcomePage.jsx'
 import { AdminDashboard } from './adminDashboard/AdminDashboard.jsx'
 import { AdminLayout } from './adminDashboard/AdminLayout.jsx'
 import { Reports } from './adminDashboard/Reports.jsx'
+import Transactions from './component/TransactionHistory.jsx'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<Welcomepage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/walletlist" element={<WalletList />} />
+         <Route path="/transactionfilter/:walletId" element={<Transactions />} />
         <Route path="/addmoney/:walletId" element={<AddMoney />} />
         <Route path="/addwallet" element={<AddWallet />} />
         <Route path="/transferMoney" element={<TransferMoney />} />

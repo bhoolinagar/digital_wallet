@@ -5,7 +5,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-
+import { CallMadeRounded, CallReceivedRounded } from "@mui/icons-material";
 const bull = (
   <Box
     component="span"
@@ -19,10 +19,14 @@ const bull = (
 
 export default function BasicCardFourCorners(props) {
   return (
-<Card sx={{ width: 800, padding: 2 }}>
+<Card sx={{ width: '90%', padding: 2 }}>
       <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 2 }}>
         {/* Arrow image left */}
-        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Arrow_east.svg" alt="Arrow" style={{ width: 32, height: 32 }} />
+       {props.transaction.type === "RECEIVED" ? (
+                         <CallReceivedRounded color="success" />
+                       ) : (
+                         <CallMadeRounded color="error" />
+                       )}
         {/* Left side */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           <Typography variant="body2" align="left" sx={{ fontWeight: "bold", color: "black" }}>{props.transaction.status}</Typography>
@@ -34,7 +38,12 @@ export default function BasicCardFourCorners(props) {
         {/* Right side */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           <Typography variant="body2" align="right" sx={{ color: "green" }}>{props.transaction.amount}</Typography>
-          <Typography variant="body2" align="right"> {props.transaction.timestamp}
+          <Typography variant="body2" align="right"> {new Date(props.transaction.timestamp).toLocaleString(undefined, {
+                  month: "short",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
             </Typography>
         </Box>
       </Box>

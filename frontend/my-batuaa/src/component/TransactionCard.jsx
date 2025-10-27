@@ -1,93 +1,65 @@
-
 import { useEffect, useState } from "react";
 import axios from "axios";
-import BasicCardFourCorners from "./BasicCardFourCorners"
-import { Box, Stack } from "@mui/material";
-import Typography from '@mui/material/Typography';
+import BasicCardFourCorners from "./BasicCardFourCorners";
+import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+export default function TransactionCard({ primaryWallet }) {
+  const token = sessionStorage.getItem("token");
+  const emailId = sessionStorage.getItem("email");
+  const [transactions, setTransactions] = useState([]);
+const navigate = useNavigate();
+
+//navigate to primary wallet
+const goToTranscationFilter = (primarywallet) => {
+   if (!primarywallet) return; 
+  navigate(`/transactionfilter/${primarywallet}`);
+  };
 
 
-export default function TransactionCard()
-{
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      if (!primaryWallet) return;
+      const walletId = primaryWallet?.walletId || primaryWallet;
+      console.log("Transactions primary:", walletId);
 
- /*let products=[
-                {   
-                    "id":10,
-                    "itemname":"Sweets",
-                    "url":"image url of sweet"
-                },
-                   {   
-                    "id":20,
-                    "itemname":"Mobile",
-                    "url":"image url of mobile"
-                },
-                   {   
-                    "id":30,
-                    "itemname":"Jeans",
-                    "url":"image url of jeans"
-                }
+      try {
+        const res = await axios.get("http://localhost:8086/transaction/api/v2/all-transactions", {
+          params: { emailId, walletId },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setTransactions(res.data);
+        console.log("Transaction data loaded:", res.data);
+      } catch (err) {
+        console.error("Error fetching transactions:", err);
+      }
+    };
 
- ]*/
+    fetchTransactions();
+  }, [primaryWallet, emailId, token]);
 
-let [transactions,setTransactions]=useState([])
- 
-useEffect(
-  ()=>{
-   //axios.get("http://localhost:8084/api/products")
-    axios.get("http://localhost:8082/transaction/api/v2/all-transactions?emailId=sakshi@gmail.com&walletId=1")
-      .then(
-        (res)=>
-          {
-            setTransactions(res.data)
-            console.log(res.data)
-          }
-      )
-      .catch(
-        (err)=>console.log(err)
-      )
+  return (
+    <div>
+      <Typography variant="h5" sx={{ mb: 2 }} align="left">
+        Recent Transactions History
+      </Typography>
 
-  },[]
+      <Box sx={{ backgroundColor: "#f5f5f5", borderRadius: 2, p: 4, width: "100%" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+         
+         <IconButton onClick={()=>goToTranscationFilter(primaryWallet?.walletId|| primaryWallet)}>
+View all
+         </IconButton>
+        </Box>
 
-)
-
-
-
-return(
-           
-
-           
-
-           <div>
-          
-           <Typography variant="h5" sx={{ mb: 2 }} align="left">
-               Recent Transactions
-           </Typography>
-           <Box sx={{ backgroundColor: '#f5f5f5', borderRadius: 2, p: 4, width: '70%' }}>
-            
-           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Typography variant="subtitle1" align="left">Recent Transactions</Typography>
-              <Typography variant="subtitle1" align="left">October 2025</Typography>
-            </Box>
-            <Typography variant="subtitle1" align="right" sx={{ alignSelf: 'flex-start' }}>
-               View all
-            </Typography>
-           </Box>
-
-
-           <Stack spacing={3} sx={{mt:4}}>
-             {transactions.map((transaction) => (
-            <BasicCardFourCorners transaction={transaction}/>
-             
-           ))}
-           
-           </Stack>
-           </Box>
-           </div>
-             
-
-
-
-)
-
-
+        <Stack spacing={3} sx={{ mt: 4 }}>
+          {transactions.map((transaction, index) => (
+            <BasicCardFourCorners key={index} transaction={transaction} />
+          ))}
+        </Stack>
+      </Box>
+    </div>
+  );
 }

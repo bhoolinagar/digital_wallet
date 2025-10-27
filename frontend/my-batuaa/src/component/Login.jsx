@@ -96,7 +96,7 @@ export default function Login() {
 
   return (
     <div>
-      <PublicAppBar/>
+    
     <Box
       sx={{
         minHeight: "100vh",

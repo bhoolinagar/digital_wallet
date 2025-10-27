@@ -14,12 +14,15 @@ import {
 import { CallMadeRounded, CallReceivedRounded } from "@mui/icons-material";
 import "./TransactionHistory.css";
 import MuiAlert from "@mui/material/Alert";
-import PrimaryWallet from "./Primary";
+import { useParams } from "react-router-dom";
+import Navbar from "../Navbar";
+import Footer from "./Footer";
 const BASE_URL = "http://localhost:8086/transaction/api/v2";
-
-const Transactions = ({ emailId=sessionStorage.getItem("email"),  primaryWallet }) => {
+const Transactions = ({ emailId=sessionStorage.getItem("email") }) => {
   let token =sessionStorage.getItem("token")
   
+  //const {primarywallet} = useParams(); 
+  let walletId = sessionStorage.getItem("walletId")
   const [transactions, setTransactions] = useState([]);
   const [filter, setFilter] = useState("");
   const [typefilter, setType] = useState("All Types");
@@ -34,33 +37,41 @@ const Transactions = ({ emailId=sessionStorage.getItem("email"),  primaryWallet 
     severity: "success", // success | error
   });
 
-console.log("P dal: "+ primaryWallet)
+console.log("P dal: "+ walletId)
   useEffect(() => {
-    if (primaryWallet) {
+    if(!token) return
+    if (walletId) {
    // fetchTransactions(primaryWallet.walletId);
     loadTransactions();
   }
     
-  }, [primaryWallet,emailId,token,typefilter, filter, fromDate, toDate,]);
+  }, [emailId,token,typefilter, filter, fromDate, toDate,]);
   // const params = { primaryWallet.walletId , emailId};
   // Fetch transactions from backend with optional filters
 
    
-  const loadTransactions = async () => {
-    if (!primaryWallet) return;
-   const walletId = primaryWallet;
+  const loadTransactions = async () => { 
+    let res=''
+    if (!walletId) return;
     try {
-   
-      let res
+     
       if (typefilter && typefilter !== "All Types") {
        console.log("Filtering by type:", typefilter);  
-     const type = typefilter;    
-       res = await axios.post(`${BASE_URL}/filter-by-type`, { walletId, emailId,type },
+       const palyload={
+        walletId, 
+        emailId,
+         type:typefilter
+       }
+     //const type = typefilter;    
+   
+       res = await axios.post(`${BASE_URL}/filter-by-type`, palyload,
+       
         { 
           headers: { "Content-Type": "application/json",Authorization: `Bearer ${token}`, } });
        setTransactions(res.data.data);
        console.log("Fetched data: ", res.data)
-      setSnackbar({
+      
+       setSnackbar({
         open: true,
         message: res.data.message || "Transactions fetched successfully!",
         severity: "success",
@@ -68,10 +79,15 @@ console.log("P dal: "+ primaryWallet)
      return;
       }
       if (filter) {
-       const remark = filter;
+       //const remark = filter;
          console.log("Filtering by filter:", filter);  
-           
-       res = await axios.post(`${BASE_URL}/view-transactions-by-remark`, { walletId,emailId,remark },
+        
+         const palyload={
+        walletId, 
+        emailId,
+         remark:filter
+       }
+       res = await axios.post(`${BASE_URL}/view-transactions-by-remark`, palyload,
         { 
           headers: { "Content-Type": "application/json",
             Authorization: `Bearer ${token}`, } });
@@ -88,12 +104,18 @@ console.log("P dal: "+ primaryWallet)
       
         //to filter transactions by custom date range 
       if (fromDate && toDate) {
-      const startDate = fromDate;
-       const endDate=toDate;
-         console.log("Filtering by date:", fromDate);  
-           
+ const palyload={
+        walletId, 
+        emailId,
+        startDate:fromDate,
+        endDate:toDate
+       }
+        
+      //const startDate = fromDate;
+     //  const endDate=toDate;
+         console.log("Filtering by date:", fromDate);             
        res = await axios.post(`${BASE_URL}/filter-by-date`, 
-        { walletId,emailId,startDate,endDate },
+        palyload,
         { 
           headers: { "Content-Type": "application/json" ,Authorization: `Bearer ${token}`,} });
        setTransactions(res.data.data);
@@ -107,21 +129,21 @@ console.log("P dal: "+ primaryWallet)
       }
     
       else{
-      res = await axios.get(`${BASE_URL}/all-transactions`, { params },{ 
+      res = await axios.get(`${BASE_URL}/all-transactions`, params ,{ 
           headers: { 
             Authorization: `Bearer ${token}`,} });
      console.log("Fetched data: ", res.data)
       setTransactions(res.data);
       setSnackbar({
         open: true,
-        message: res.data.message || "Transactions fetched successfully!",
+        message: res.message || "Transactions fetched successfully!",
         severity: "success",
       });
     }
       setError("");
     } catch (err) {
       console.error("Error fetching transactions", err);
-      setError(res.data.message)
+      setError(res.message)
      // setError("Failed to load transactions. Please try again later.");
       setTransactions([]);
       setSnackbar({
@@ -160,6 +182,7 @@ const handleCloseSnackbar = (_, reason) => {
 
   return (
     <div>
+      <Navbar/>
     <Box className="transaction-container">
       <Typography variant="h5" className="transaction-title">
         Transaction History
@@ -256,7 +279,8 @@ const handleCloseSnackbar = (_, reason) => {
       )}
 
       {sortedTransactions.map((item, idx) => (
-        <Card key={idx} className="transaction-item">
+       
+       <Card key={idx} className="transaction-item">
           <CardContent className="transaction-row">
             <Box className="icon-section">
               <IconButton
@@ -317,6 +341,7 @@ const handleCloseSnackbar = (_, reason) => {
                {snackbar.message}
              </MuiAlert>
            </Snackbar>
+           <Footer/>
     </div>
   );
 };

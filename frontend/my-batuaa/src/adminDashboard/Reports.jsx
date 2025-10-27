@@ -3,7 +3,7 @@
 import axios from "axios";
 import { Box, Typography, Button, Paper } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-
+import Footer from "../component/Footer";
 export function Reports() {
  const email= sessionStorage.getItem("email")
   const role =sessionStorage.getItem("role")
@@ -58,6 +58,7 @@ export function Reports() {
   };
 
   return (
+    <div>
     <Paper sx={{ p: 4 }}>
       <Typography variant="h4" gutterBottom sx={{fontWeight: "bold"}}>
         Reports
@@ -78,5 +79,7 @@ export function Reports() {
         </Button>
       </Box>
     </Paper>
+    <Footer/>
+    </div>
   );
 }

@@ -38,7 +38,6 @@ const [formData, setFormData] = useState({
   });
 
 
-  
   // Validation logic
   const validate = () => {
     const newErrors = {};
