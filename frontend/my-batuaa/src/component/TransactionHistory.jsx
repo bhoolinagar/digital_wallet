@@ -22,7 +22,7 @@ const Transactions = ({ emailId=sessionStorage.getItem("email"),  primaryWallet 
   
   const [transactions, setTransactions] = useState([]);
   const [filter, setFilter] = useState("");
-  const [type, setType] = useState("All Types");
+  const [typefilter, setType] = useState("All Types");
   const [sort, setSort] = useState("Recent First");
   const [error, setError] = useState("");
   const [fromDate, setFromDate] = useState("");
@@ -41,7 +41,7 @@ console.log("P dal: "+ primaryWallet)
     loadTransactions();
   }
     
-  }, [primaryWallet,emailId,token,type, filter, fromDate, toDate,]);
+  }, [primaryWallet,emailId,token,typefilter, filter, fromDate, toDate,]);
   // const params = { primaryWallet.walletId , emailId};
   // Fetch transactions from backend with optional filters
 
@@ -52,9 +52,9 @@ console.log("P dal: "+ primaryWallet)
     try {
    
       let res
-      if (type && type !== "All Types") {
-       console.log("Filtering by type:", type);  
-        params.type = type;    
+      if (typefilter && typefilter !== "All Types") {
+       console.log("Filtering by type:", typefilter);  
+     const type = typefilter;    
        res = await axios.post(`${BASE_URL}/filter-by-type`, { walletId, emailId,type },
         { 
           headers: { "Content-Type": "application/json",Authorization: `Bearer ${token}`, } });
@@ -183,7 +183,7 @@ const handleCloseSnackbar = (_, reason) => {
             select
             label="Transaction Type"
             size="small"
-            value={type}
+            value={typefilter}
             onChange={(e) => setType(e.target.value)}
             className="filter-select"
           >

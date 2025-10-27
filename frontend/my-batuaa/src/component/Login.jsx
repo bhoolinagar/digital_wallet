@@ -80,7 +80,8 @@ export default function Login() {
       // Redirect based on role
       
       setTimeout(() => {
-      if (role === "ADMIN") navigate("/admin");
+      if (role === "ADMIN") navigate("/admin/admindashboard");
+        // navigate(`/admindashboard`);
       else navigate(`/dashboard`);
     }, 1000); // 
 

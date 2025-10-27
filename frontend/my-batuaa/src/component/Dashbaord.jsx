@@ -14,12 +14,19 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import WalletList from './WalletList';
 import Navbar from '../Navbar';
+import { useNavigate } from 'react-router-dom';
 import PrimaryWallet from './Primary';
 import Footer from './Footer';
 import TransactionHistory from './TransactionHistory';
 
 export default function Dashboard() {
 const [primarywallet, setPrimaryWallet] = React.useState(null);
+
+  const navigate = useNavigate();
+
+  const goToAdminDashboard = () => {
+    navigate('/admindashboard'); // redirects to AdminDashboard route
+  };
 
   return (
     <div>
@@ -29,6 +36,16 @@ const [primarywallet, setPrimaryWallet] = React.useState(null);
       <Box height={20}/>
      <TransactionHistory primaryWallet={primarywallet}/>
      <Footer></Footer>
+     
+
+
+  {/* <div>
+      <h1>Dashboard</h1>
+      <button onClick={goToAdminDashboard}>
+        Go to Admin Dashboard
+      </button>
+    </div> */}
+
 {/*<WalletList/> */}
  </div>
   )}
