@@ -13,6 +13,8 @@ const bull = (
   >
     •
   </Box>
+
+  
 );
 
 export default function BasicCardFourCorners(props) {
