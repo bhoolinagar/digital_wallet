@@ -2,6 +2,7 @@ package com.batuaa.transactionservice.exception;
 
 import com.batuaa.transactionservice.dto.ApiResponse;
 import jakarta.servlet.ServletException;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,6 +18,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InsufficientFundsException.class)
     public ResponseEntity<ApiResponse<Object>> handleInsufficientFunds(InsufficientFundsException ex) {
 
+        ApiResponse<Object> response = new ApiResponse<>("fail", ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+    @ExceptionHandler(InvalidWalletTransactionException.class)
+    public ResponseEntity<ApiResponse<Object>> handleInvalidWalletTransaction(InvalidWalletTransactionException ex){
         ApiResponse<Object> response = new ApiResponse<>("fail", ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
