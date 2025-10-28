@@ -13,6 +13,7 @@ public class TransferDto {
 
     @NotBlank(message = "Receiver walletId cannot be blank")
     private String toWalletId;
+
     @NotNull(message = "Amount cannot be null")
     @Positive(message = "Amount must be greater than 0")
 //    @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
@@ -23,6 +24,7 @@ public class TransferDto {
     @NotBlank(message = "Sender email cannot be blank")
     @Email(message = "Invalid sender email format")
     private String fromBuyerEmailId;
+
     @NotBlank(message = "Receiver email cannot be blank")
     @Email(message = "Invalid receiver email format")
     private String toBuyerEmailId;
