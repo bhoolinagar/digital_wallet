@@ -99,8 +99,9 @@
 .filter-buttons {
   
   display: flex;
-  gap: 10px;
+  gap: 7px;
   margin-left: auto; /* pushes buttons to the right */
+  margin-right: 10%;
   flex-direction: row;
  
 }

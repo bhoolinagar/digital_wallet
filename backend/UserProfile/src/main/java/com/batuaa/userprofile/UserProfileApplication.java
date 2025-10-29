@@ -12,7 +12,6 @@ public class UserProfileApplication {
     public static void main(String[] args) {
         SpringApplication.run(UserProfileApplication.class, args);
     }
-
     @Bean
     public FilterRegistrationBean getFilter()
     {
@@ -21,5 +20,4 @@ public class UserProfileApplication {
         filterbean.addUrlPatterns("/wallet/api/v1/*");
         return filterbean;
     }
-
 }

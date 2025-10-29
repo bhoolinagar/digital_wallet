@@ -50,111 +50,76 @@ console.log("P dal: "+ walletId)
   // Fetch transactions from backend with optional filters
 
    
-  const loadTransactions = async () => { 
-    let res=''
-    if (!walletId) return;
-    try {
-     
-      if (typefilter && typefilter !== "All Types") {
-       console.log("Filtering by type:", typefilter);  
-       const palyload={
-        walletId, 
-        emailId,
-         type:typefilter
-       }
-     //const type = typefilter;    
-   
-       res = await axios.post(`${BASE_URL}/filter-by-type`, palyload,
-       
-        { 
-          headers: { "Content-Type": "application/json",Authorization: `Bearer ${token}`, } });
-       setTransactions(res.data.data);
-       console.log("Fetched data: ", res.data)
-      
-       setSnackbar({
-        open: true,
-        message: res.data.message || "Transactions fetched successfully!",
-        severity: "success",
-      });
-     return;
-      }
-      if (filter) {
-       //const remark = filter;
-         console.log("Filtering by filter:", filter);  
-        
-         const palyload={
-        walletId, 
-        emailId,
-         remark:filter
-       }
-       res = await axios.post(`${BASE_URL}/view-transactions-by-remark`, palyload,
-        { 
-          headers: { "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, } });
-       setTransactions(res.data.data);
-       console.log("Fetched data:  by remarks", res.data)
-       
-       setSnackbar({
-        open: true,
-        message: res.data.message || "Transactions fetched successfully!",
-        severity: "success",
-      });
-      return;
-      }
-      
-        //to filter transactions by custom date range 
-      if (fromDate && toDate) {
- const palyload={
-        walletId, 
-        emailId,
-        startDate:fromDate,
-        endDate:toDate
-       }
-        
-      //const startDate = fromDate;
-     //  const endDate=toDate;
-         console.log("Filtering by date:", fromDate);             
-       res = await axios.post(`${BASE_URL}/filter-by-date`, 
-        palyload,
-        { 
-          headers: { "Content-Type": "application/json" ,Authorization: `Bearer ${token}`,} });
-       setTransactions(res.data.data);
-       console.log("Fetched data:  by bate", res.data)
-      setSnackbar({
-        open: true,
-        message: res.data.message || "Transactions fetched successfully!",
-        severity: "success",
-      });
-      return;
-      }
-    
-      else{
-      res = await axios.get(`${BASE_URL}/all-transactions`, params ,{ 
-          headers: { 
-            Authorization: `Bearer ${token}`,} });
-     console.log("Fetched data: ", res.data)
-      setTransactions(res.data);
-      setSnackbar({
-        open: true,
-        message: res.message || "Transactions fetched successfully!",
-        severity: "success",
-      });
+  const loadTransactions = async () => {
+  if (!walletId || !emailId) return;
+
+  try {
+    let res;
+
+    // Base headers
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Filter by type
+    if (typefilter && typefilter !== "All Types") {
+      console.log("Filtering by type:", typefilter);
+      const payload = { walletId, emailId, type: typefilter };
+
+      res = await axios.post(`${BASE_URL}/filter-by-type`, payload, { headers });
+      setTransactions(res.data.data);
     }
-      setError("");
-    } catch (err) {
-      console.error("Error fetching transactions", err);
-      setError(res.message)
-     // setError("Failed to load transactions. Please try again later.");
-      setTransactions([]);
-      setSnackbar({
-        open: true,
-        message:
-          error.res?.data?.message ||
-          "Failed to fetched transaction. Please try again.",
-        severity: "error",
-      });
+
+    //  Filter by remark
+    else if (filter) {
+      console.log("Filtering by remark:", filter);
+      const payload = { walletId, emailId, remark: filter };
+
+      res = await axios.post(`${BASE_URL}/view-transactions-by-remark`, payload, { headers });
+      setTransactions(res.data.data);
     }
-  };
+
+    //  Filter by date
+    else if (fromDate && toDate) {
+      console.log("Filtering by date range:", fromDate, "to", toDate);
+      const payload = { walletId, emailId, startDate: fromDate, endDate: toDate };
+
+      res = await axios.post(`${BASE_URL}/filter-by-date`, payload, { headers });
+      setTransactions(res.data.data);
+    }
+
+    //  Default: all transactions
+    else {
+      console.log("Fetching all transactions");
+      res = await axios.get(`${BASE_URL}/all-transactions`, {
+        params: { emailId, walletId },
+        headers,
+      });
+      setTransactions(res.data.data || res.data);
+    }
+
+    setSnackbar({
+      open: true,
+      message: res.data.message || "Transactions fetched successfully!",
+      severity: "success",
+    });
+    setError("");
+
+  } catch (err) {
+    console.error("Error fetching transactions", err);
+    setError("Failed to load transactions. Please try again later.");
+    setTransactions([]);
+    setSnackbar({
+      open: true,
+      message:
+        err.response?.data?.message ||
+        "Failed to fetch transactions. Please try again.",
+      severity: "error",
+    });
+  }
+};
+
 
   // Clear all filters
   const clearFilters = () => {

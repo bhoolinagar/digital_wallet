@@ -98,12 +98,12 @@ const handleCloseNavMenu = () => {
               spending, My Batuaa is designed to make digital finance effortless
               and transparent.
             </Typography>
-
+{/* 
             <img
               src={getstart}
               alt="getstart"
               style={{ width: 250, height: 90, marginTop: 100 }}
-            />
+            /> */}
           </Box>
 
           {/* Right Side - Image */}
