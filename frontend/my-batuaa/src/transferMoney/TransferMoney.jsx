@@ -4,7 +4,7 @@ import {
   TextField,
   InputAdornment,
   Button,
-  CircularProgress,
+  CircularProgress,Snackbar
 } from "@mui/material";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -13,11 +13,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "../component/AddMoney.css";
 import Footer from "../component/Footer";
 import Navbar from "../Navbar";
-
+import { LoadingButton } from "@mui/lab";
+import MuiAlert from "@mui/material/Alert";
+import LoadingScreen from "../component/LoadingScreen";
 export default function TransferMoney() {
   const location = useLocation();
   const navigate = useNavigate();
-
+const goToDashboard = () => {
+    navigate('/dashboard'); // redirects to AdminDashboard route
+  };
   // Get email and primary wallet from state or session
   const { email, primaryWalletId } = location.state || {};
   const fromBuyerEmail = email || sessionStorage.getItem("email");
@@ -26,6 +30,15 @@ export default function TransferMoney() {
   const [loading, setLoading] = useState(true);
   const [wallets, setWallets] = useState([]);
   const [message, setMessage] = useState("");
+const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+ const handleCloseSnackbar = (_, reason) => {
+    if (reason === "clickaway") return;
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const [formData, setFormData] = useState({
     fromWalletId: primaryWalletId || "",
@@ -34,6 +47,7 @@ export default function TransferMoney() {
     remarks: "",
   });
 
+  
   // Fetch wallets on mount
   useEffect(() => {
     if (!token) {
@@ -43,6 +57,11 @@ export default function TransferMoney() {
 
     if (!fromBuyerEmail) {
       setMessage("User email not found. Please login again.");
+     setSnackbar({
+        open: true,
+        message: "User email not found. Please login again.",
+        severity: "error",
+      });
       setLoading(false);
       return;
     }
@@ -66,10 +85,20 @@ export default function TransferMoney() {
             }));
           }
         } else {
+          setSnackbar({
+            open: true,
+            message: "No wallets found for this user.",
+            severity: "warning",
+          });
           setMessage("No wallets found for this user.");
         }
       })
       .catch((err) => {
+        setSnackbar({
+          open: true,
+          message: err.response?.data?.message || "Error fetching wallets.",
+          severity: "error",
+        });
         console.error("Failed to fetch wallets:", err);
         setMessage(err.response?.data?.message || "Error fetching wallets.");
       })
@@ -84,6 +113,11 @@ export default function TransferMoney() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.fromWalletId || !formData.toWalletId || !formData.amount) {
+      setSnackbar({
+        open: true,
+        message: "Please fill all required fields.",
+        severity: "error",
+      });
       setMessage("Please fill all required fields.");
       return;
     }
@@ -122,7 +156,16 @@ export default function TransferMoney() {
       );
 
       setMessage(res.data.message || "Transaction successful!");
+      setSnackbar({
+        open: true,
+        message: res.data.message || "Transaction successful!",
+        severity: "success",
+      });
       setFormData((prev) => ({ ...prev, toWalletId: "", amount: "", remarks: "" }));
+   setTimeout(() => {
+      navigate("/dashboard");
+    }, 1000);
+    
     } catch (err) {
       console.error("Transaction error:", err);
       setMessage(err.response?.data?.message || err.message || "Transaction failed.");
@@ -131,7 +174,15 @@ export default function TransferMoney() {
     }
   };
 
-  if (loading) return <CircularProgress sx={{ mt: 10, color: "#0F3A6E" }} />;
+  if (loading) {
+
+    return (
+      <div>
+        <LoadingScreen/>
+        <h6> Sending email to buyer</h6>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -208,6 +259,7 @@ export default function TransferMoney() {
           fontFamily: "Roboto Mono, monospace",
           "&:hover": { backgroundColor: "#0d2e59" },
         }}
+        // onClick={goToDashboard}
       >
         Submit
       </Button>
@@ -223,6 +275,22 @@ export default function TransferMoney() {
         </Box>
       )}
     </form>
+    <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </MuiAlert>
+      </Snackbar>
     <Footer/>
     </div>
   );

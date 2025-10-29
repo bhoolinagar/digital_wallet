@@ -52,9 +52,6 @@ private TransactionLoggingService transactionLoggingService;
     }
 
 
-
-
-
 // wallet to wallet transfer
 
     @Override
@@ -103,6 +100,23 @@ private TransactionLoggingService transactionLoggingService;
 
                 throw new InsufficientFundsException("Insufficient funds in your selected wallet");
             }
+//            // Check for insufficient funds before proceeding
+//            if (walletFrom.getBalance().compareTo(transferDto.getAmount()) < 0) {
+//                // Logging the  transaction as failed for sender-only transaction
+//                senderTransaction = new Transaction(
+//                        walletFrom, walletTo, walletFrom.getBuyer(), walletTo.getBuyer(),
+//                        transferDto.getAmount(), LocalDateTime.now(),
+//                        Status.FAILED, (transferDto.getRemarks() != null && !transferDto.getRemarks().trim().isEmpty())
+//                        ? transferDto.getRemarks()
+//                        : "Transfer failed: Insufficient funds in your wallet.",
+//                        Type.WITHDRAWN
+//                );
+//
+//                log.warn("Transfer failed due to insufficient funds | Wallet: {}, Amount: {}",
+//                        transferDto.getFromWalletId(), transferDto.getAmount());
+//
+//                throw new InsufficientFundsException("Insufficient funds in your selected wallet");
+//            }
 
             // Sender transaction
             senderTransaction = new Transaction(walletFrom, walletTo, walletFrom.getBuyer(), walletTo.getBuyer(),
@@ -131,13 +145,39 @@ private TransactionLoggingService transactionLoggingService;
             log.info("Receiver transaction created | ID: {},Amount: {}", receiverTransaction.getTransactionId(), transferDto.getAmount());
 
             log.info("Wallet transfer successful | From: {}, To: {},Amount: {}", transferDto.getFromWalletId(), transferDto.getToWalletId(), transferDto.getAmount());
+//
+//            /// to send email to sender  and receiver for transaction
+//            processTransaction(senderTransaction.getTransactionId(),senderTransaction.
+//                getFromBuyer().getEmailId(),transferDto.getAmount());
+////process to sent email to receiver for transaction
+//          processTransaction(receiverTransaction.getTransactionId(),receiverTransaction.
+//                  getFromBuyer().getEmailId(),transferDto.getAmount());
 
-            /// to send email to sender  and receiver for transaction
-            processTransaction(senderTransaction.getTransactionId(),senderTransaction.
-                getFromBuyer().getEmailId(),transferDto.getAmount());
-//process to sent email to receiver for transaction
-          processTransaction(receiverTransaction.getTransactionId(),receiverTransaction.
-                  getFromBuyer().getEmailId(),transferDto.getAmount());
+            Map<String, Object> senderTranscationModel = Map.of(
+                    "name", walletTo.getBuyer().getName(),
+                    "transactionId", senderTransaction.getTransactionId(),
+                    "amount", transferDto.getAmount(),
+                    "date", senderTransaction.getTimestamp(),
+                    "senderEmail", senderTransaction.getFromBuyer().getEmailId(),
+                    "receiverEmail", receiverTransaction.getToBuyer().getEmailId(),
+                    "transactionType" ,senderTransaction.getType(),
+                    "status", senderTransaction.getStatus()
+            );
+//  to send me to sender by company
+emailService.sendTransactionEmail(senderTransaction.getToBuyer().getEmailId(),senderTranscationModel);
+
+            Map<String, Object> recieverTranscationModel = Map.of(
+                    "name", walletFrom.getBuyer().getName(),
+                    "transactionId", receiverTransaction.getTransactionId(),
+                    "amount", transferDto.getAmount(),
+                    "date", receiverTransaction.getTimestamp(),
+                    "senderEmail", receiverTransaction.getFromBuyer().getEmailId(),
+                    "receiverEmail", senderTransaction.getToBuyer().getEmailId(),
+                    "transactionType", receiverTransaction.getType(),
+                    "status", receiverTransaction.getStatus()
+            );
+            //to send to email to sender by company
+            emailService.sendTransactionEmail(receiverTransaction.getFromBuyer().getEmailId(),recieverTranscationModel);
             return senderTransaction;
 
         } catch (WalletNotFoundException | InsufficientFundsException | DuplicateTransactionException | InvalidWalletTransactionException e) {
@@ -148,15 +188,12 @@ private TransactionLoggingService transactionLoggingService;
                 senderTransaction.setStatus(Status.FAILED);
                 senderTransaction.setRemarks("Transfer failed: " + e.getMessage());
                 transactionLoggingService.logFailedTransaction(senderTransaction);
-
             }
             throw e;
-
         }
         catch (Exception e) {
             log.error("Unexpected error during wallet transfer | From: {}, To: {}, Amount: {}, Error: {}",
                     transferDto.getFromWalletId(), transferDto.getToWalletId(), transferDto.getAmount(), e.getMessage(), e);
-
             if (senderTransaction != null) {
                 senderTransaction.setStatus(Status.FAILED);
                 senderTransaction.setRemarks("Unexpected error: " + e.getMessage());

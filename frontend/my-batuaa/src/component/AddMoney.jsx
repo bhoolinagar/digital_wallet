@@ -15,6 +15,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import Footer from "./Footer";
  import Navbar from "../Navbar";
+ import { useNavigate } from 'react-router-dom';
 export default function AddMoney() {
   let token= sessionStorage.getItem("token")
 const { walletId } = useParams(); 
@@ -39,6 +40,11 @@ console.log("WalletId "+ walletId)
     return Object.keys(newErrors).length === 0;
 
   }
+  const navigate = useNavigate();
+
+  const goToDashboard = () => {
+    navigate('/dashboard'); // redirects to AdminDashboard route
+  };
   //const walletId = "WAL8BD4C4117";
 
   const handleChange = (event) => {
@@ -93,7 +99,7 @@ if (!validate()) return; // stop if invalid
   return (
    
     <div> <Navbar/>
-    <form onSubmit={handleSubmit} className="add-money-form">
+    <form onSubmit={handleSubmit} className="add-money-form-money">
       <Box className='box-container'>
         <Box className="form-title">Add Money</Box>
 
@@ -121,7 +127,7 @@ if (!validate()) return; // stop if invalid
           type="submit"
          className="submit-button contained"
           endIcon={<ArrowForwardIcon />}
-         
+         onClick={goToDashboard}
         >
           Submit
         </Button>

@@ -65,16 +65,14 @@
   padding: 2;
   bottom: 5%;
 }
-
 .white-text {
   color: white;
   text-align: left;
-  word-spacing: 3px;        /* spacing between words */
-  letter-spacing: 0.5px;    /* subtle spacing between letters */
+  word-spacing: 2px;        /* spacing between words */
+  letter-spacing: 0.24px;    /* subtle spacing between letters */
   line-height: 1.6;         /* improves readability */
   margin-bottom: 8px;       /* adds space between Typography lines */
 }
-
 /*if you need more space between specific lines */
 .white-text.spaced {
   margin-bottom: 16px;

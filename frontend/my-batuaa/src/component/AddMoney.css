@@ -10,29 +10,50 @@
   gap: 20px;
 
   background-color: #f3f5f9;
-  padding: 40px 50px;
+  padding: 10px 10px;
   border-radius: 40px;
-  width: 60vw;
+  min-width: 40vw;
+  max-width: 60vw;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+ 
+}
 
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+.add-money-form-money {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+
+  background-color: #f3f5f9;
+  padding: 10px 20px;
+  border-radius: 30px;
+  min-width: 20vw;
+  max-width: 30vw;
+
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.15);
  
 }
 /* Heading */
 .form-title {
-  font-size: 38px;
+  font-size: 25px;
   font-weight: bold;
   font-family: "Roboto Mono, monospace";
   color: #0f3a6e;
   margin-bottom: 20px;
   text-align: center;
   width: 100%;
-  height: 80px;
+  height: 25px;
 }
 
 /* Input wrapper */
 .input-container {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 /* Input field (MUI TextField override) */
@@ -51,7 +72,7 @@
 /* Label text */
 .MuiInputLabel-root {
   color: gray !important;
-  font-weight: 500;
+  font-weight: 300;
   font-size: 14px;
 }
 
@@ -108,11 +129,14 @@
 }
 
 .box-container{
+   min-height: "100vh";
   display: "flex";
 flex-direction: "column";
-                align-items: "center";
-                cursor: "pointer";  
-                }
+   align-items: "center";
+  cursor: "pointer";  
+  justify-content: "center";
+  /* background-color : "#f9f9f9";         */
+              }
 .box-container:hover{
 transform: "scale(1.05)"; transition: "0.2s" 
     }            

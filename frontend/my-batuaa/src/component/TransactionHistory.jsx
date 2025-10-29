@@ -37,7 +37,7 @@ const Transactions = ({ emailId=sessionStorage.getItem("email") }) => {
     severity: "success", // success | error
   });
 
-console.log("P dal: "+ walletId)
+//console.log("P dal: "+ walletId)
   useEffect(() => {
     if(!token) return
     if (walletId) {
@@ -261,18 +261,30 @@ const handleCloseSnackbar = (_, reason) => {
             </Box>
 
             <Box className="transaction-section">
+                <Typography className="transaction-type" sx={{ fontWeight: 600,
+              fontSize: "1.05rem",
+                  color:item.type === "RECEIVED" ? "#2e7d32" : "#c62828"}}>{item.type}</Typography>
                <Typography variant="caption" color="textSecondary">
-                ID: {item.transactionId}
+                wallet ID: {item.toWallet.walletId}
               </Typography>
-              <Typography className="transaction-type">{item.type}</Typography>
+                <Typography variant="body2" color="textSecondary" align="left">
+                          Name: {item?.toWallet?.buyer?.name || " "}
+                        </Typography>
+            
               <Typography variant="body2" color="textSecondary" className="remarks">
-                {item.remarks}
+                remarks 
+                {item?.remarks ||'-'}
               </Typography>
              
             </Box>
 
             <Box className="amount-section">
-              <Typography className={`amount ${item.type === "RECEIVED" ? "RECEIVED" : "WITHDRAWN"}`}>
+              <Typography  sx={{
+              fontWeight: 600,
+              fontSize: "1.05rem",
+              color: item.type === "RECEIVED" ? "#2e7d32" : "#c62828",
+            }}
+              className={`amount ${item.type === "RECEIVED" ? "RECEIVED" : "WITHDRAWN"}`}>
                 {item.type === "RECEIVED" ? "+" : "-"} ₹{item.amount.toFixed(2)}
               </Typography>
               <Typography variant="caption" color="textSecondary" >

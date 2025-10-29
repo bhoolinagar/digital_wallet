@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class UserProfileApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(UserProfileApplication.class, args);
     }
