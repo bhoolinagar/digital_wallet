@@ -47,7 +47,6 @@ const [snackbar, setSnackbar] = useState({
     remarks: "",
   });
 
-  
   // Fetch wallets on mount
   useEffect(() => {
     if (!token) {
@@ -165,7 +164,7 @@ const [snackbar, setSnackbar] = useState({
    setTimeout(() => {
       navigate("/dashboard");
     }, 1000);
-    
+
     } catch (err) {
       console.error("Transaction error:", err);
       setMessage(err.response?.data?.message || err.message || "Transaction failed.");
@@ -259,7 +258,6 @@ const [snackbar, setSnackbar] = useState({
           fontFamily: "Roboto Mono, monospace",
           "&:hover": { backgroundColor: "#0d2e59" },
         }}
-        // onClick={goToDashboard}
       >
         Submit
       </Button>

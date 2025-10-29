@@ -87,7 +87,8 @@ export default function Navbar() {
             {/* Center: Dashboard link (Hidden on mobile) */}
             <Box
               sx={{
-                display: { xs: "none", md: "flex" },
+                display: { xs: "none",
+                   md: "flex" },
                 alignItems: "center",
                 gap: 3,
                 cursor: "pointer",
@@ -177,7 +178,8 @@ export default function Navbar() {
             </Box>
 
             {/* Mobile Menu Icon */}
-            <Box sx={{ display: { xs: "flex", md: "none" } }}>
+            <Box sx={{ display: { 
+              xs: "flex", md: "none" } }}>
               <IconButton onClick={handleOpenNavMenu}>
                 <MenuIcon sx={{ color: "#0F3A6E" }} />
               </IconButton>

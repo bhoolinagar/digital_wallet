@@ -38,8 +38,6 @@ sessionStorage.setItem("walletId",primarywallet)
      {/* <TransactionHistory primaryWallet={primarywallet}/> */}
      <Footer></Footer>
      
-
-
   {/* <div>
       <h1>Dashboard</h1>
       <button onClick={goToAdminDashboard}>

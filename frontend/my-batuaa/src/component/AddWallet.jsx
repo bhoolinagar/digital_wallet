@@ -3,13 +3,13 @@ import {
   Box,
   TextField,
   InputAdornment,
-  Snackbar,
+  Button, Snackbar,
   Typography,
 } from "@mui/material";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { LoadingButton } from "@mui/lab"; // ✅ loading button
+import { LoadingButton } from "@mui/lab"; // loading button
 import MuiAlert from "@mui/material/Alert";
 import axios from "axios";
 import Navbar from "../Navbar";
@@ -29,14 +29,14 @@ export default function AddWallet() {
   });
 
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false); // ✅ new state
+  const [loading, setLoading] = useState(false); //  new state
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
 
-  // 🧮 Validation
+  //  Validation
   const validate = () => {
     const newErrors = {};
 
@@ -51,24 +51,22 @@ export default function AddWallet() {
     } else if (!/^[A-Za-z\s]+$/.test(formData.bankName)) {
       newErrors.bankName = "Bank name must contain only letters.";
     }
-
-    if (!formData.balance.trim()) {
+if (!formData.balance.trim()) {
       newErrors.balance = "Amount is required.";
     } else if (isNaN(formData.balance) || parseFloat(formData.balance) <= 0) {
       newErrors.balance = "Enter a valid positive amount.";
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // 📝 Input handler
+  //  Input handler
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // 🚀 Submit handler
+  //  Submit handler
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!validate()) return;
@@ -202,7 +200,7 @@ export default function AddWallet() {
           />
         </div>
 
-        {/* ✅ Loading Submit Button */}
+        {/* Loading Submit Button */}
         <LoadingButton
           type="submit"
           variant="contained"
