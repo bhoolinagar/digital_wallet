@@ -16,12 +16,17 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../Navbar";
 import Footer from "./Footer";
-
+import { useNavigate } from 'react-router-dom';
 export default function AddWallet() {
   let emailId = sessionStorage.getItem("email")
   //console.log("Buyer email:",emailId)
   // useParams();
   let token =sessionStorage.getItem("token")
+const navigate = useNavigate();
+
+  const goToDashboard = () => {
+    navigate('/dashboard'); // redirects to AdminDashboard route
+  };
 
 const [formData, setFormData] = useState({
     accountNumber: "",
@@ -188,7 +193,7 @@ const [formData, setFormData] = useState({
       </div>
 
       <Button type="submit" className="submit-button contained"
-      
+      onClick={goToDashboard}
       endIcon={<ArrowForwardIcon />}
       >
         Submit

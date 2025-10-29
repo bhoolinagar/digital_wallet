@@ -17,7 +17,9 @@ import Navbar from "../Navbar";
 export default function TransferMoney() {
   const location = useLocation();
   const navigate = useNavigate();
-
+const goToDashboard = () => {
+    navigate('/dashboard'); // redirects to AdminDashboard route
+  };
   // Get email and primary wallet from state or session
   const { email, primaryWalletId } = location.state || {};
   const fromBuyerEmail = email || sessionStorage.getItem("email");
@@ -34,6 +36,7 @@ export default function TransferMoney() {
     remarks: "",
   });
 
+  
   // Fetch wallets on mount
   useEffect(() => {
     if (!token) {
@@ -208,6 +211,7 @@ export default function TransferMoney() {
           fontFamily: "Roboto Mono, monospace",
           "&:hover": { backgroundColor: "#0d2e59" },
         }}
+         onClick={goToDashboard}
       >
         Submit
       </Button>

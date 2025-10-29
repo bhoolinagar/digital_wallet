@@ -103,6 +103,23 @@ private TransactionLoggingService transactionLoggingService;
 
                 throw new InsufficientFundsException("Insufficient funds in your selected wallet");
             }
+//            // Check for insufficient funds before proceeding
+//            if (walletFrom.getBalance().compareTo(transferDto.getAmount()) < 0) {
+//                // Logging the  transaction as failed for sender-only transaction
+//                senderTransaction = new Transaction(
+//                        walletFrom, walletTo, walletFrom.getBuyer(), walletTo.getBuyer(),
+//                        transferDto.getAmount(), LocalDateTime.now(),
+//                        Status.FAILED, (transferDto.getRemarks() != null && !transferDto.getRemarks().trim().isEmpty())
+//                        ? transferDto.getRemarks()
+//                        : "Transfer failed: Insufficient funds in your wallet.",
+//                        Type.WITHDRAWN
+//                );
+//
+//                log.warn("Transfer failed due to insufficient funds | Wallet: {}, Amount: {}",
+//                        transferDto.getFromWalletId(), transferDto.getAmount());
+//
+//                throw new InsufficientFundsException("Insufficient funds in your selected wallet");
+//            }
 
             // Sender transaction
             senderTransaction = new Transaction(walletFrom, walletTo, walletFrom.getBuyer(), walletTo.getBuyer(),
